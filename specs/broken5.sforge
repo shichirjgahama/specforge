@@ -1,0 +1,17 @@
+spec Broken version 1;
+
+const a: Int = 1
+
+entity A {
+  id: Identifier;
+  value: Int
+}
+
+widget Foo;
+
+state S {
+  initial a;
+  a -> b : go
+}
+
+invariant I always 1 == 1

@@ -1,0 +1,134 @@
+@startuml
+title RollCity domain model
+
+class Customer {
+  id: Identifier
+  status: Text
+  deposit: Money
+  debt: Money
+  lateReturns: Int
+  blockedUntil: Time
+}
+
+class Scooter {
+  id: Identifier
+  state: ScooterState
+  battery: Int
+  mileageSinceService: Int
+  reservedUntil: Time
+}
+
+class Station {
+  id: Identifier
+  name: Text
+  capacity: Int
+}
+
+class Reservation {
+  id: Identifier
+  state: ReservationState
+  createdAt: Time
+  expiresAt: Time
+}
+
+class Rental {
+  id: Identifier
+  state: RentalState
+  startedAt: Time
+  dueAt: Time
+  returnedAt: Time
+  minutesLate: Int
+  lateFee: Money
+  closed: Bool
+}
+
+class Tariff {
+  perMinute: Money
+  depositAmount: Money
+  lateFeePerHour: Money
+  graceMinutes: Int
+  maxHours: Int
+}
+
+class Payment {
+  amount: Money
+  kind: Text
+  status: Text
+}
+
+class Penalty {
+  amount: Money
+  reason: Text
+  paid: Bool
+}
+
+class DamageClaim {
+  amount: Money
+  state: Text
+}
+
+class MaintenanceRecord {
+  kind: Text
+  startedAt: Time
+  mileageAtService: Int
+}
+
+class BlacklistEntry {
+  reason: Text
+  expiresAt: Time
+}
+
+class Season {
+  coefficient: Int
+  startMonth: Int
+  endMonth: Int
+}
+
+class Operator
+class Admin
+
+enum ScooterState {
+  available
+  reserved
+  rented
+  maintenance
+  lost
+  retired
+}
+
+enum RentalState {
+  draft
+  active
+  overdue
+  closed
+  disputed
+  cancelled
+}
+
+enum ReservationState {
+  none
+  active
+  used
+  cancelled
+  expired
+}
+
+Customer "1" --> "0..*" Rental
+Customer "1" --> "0..*" Reservation
+Customer "1" --> "0..*" Penalty
+Customer "1" --> "0..*" Payment
+Customer "1" --> "0..*" BlacklistEntry
+Scooter "1" --> "0..*" Rental
+Scooter "1" --> "0..*" Reservation
+Scooter "1" --> "0..*" MaintenanceRecord
+Station "1" --> "0..*" Scooter
+Rental "1" --> "0..*" Penalty
+Rental "1" --> "0..*" Payment
+Rental "1" --> "0..1" DamageClaim
+Tariff "1" --> "0..*" Rental
+Season "1" --> "0..*" Tariff
+Scooter --> ScooterState
+Rental --> RentalState
+Reservation --> ReservationState
+
+@enduml

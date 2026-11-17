@@ -1,0 +1,33 @@
+         272188 function calls (254440 primitive calls) in 0.108 seconds
+
+   Ordered by: cumulative time
+   List reduced from 213 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.087    0.087 C:\zalupki\specforge\specforge\core\parser.py:816(parse)
+        1    0.000    0.000    0.045    0.045 C:\zalupki\specforge\specforge\core\parser.py:37(__init__)
+        1    0.000    0.000    0.045    0.045 C:\zalupki\specforge\specforge\core\lexer.py:208(tokenize)
+        1    0.016    0.016    0.045    0.045 C:\zalupki\specforge\specforge\core\lexer.py:92(tokenize)
+        1    0.000    0.000    0.041    0.041 C:\zalupki\specforge\specforge\core\parser.py:141(parse)
+      217    0.000    0.000    0.041    0.000 C:\zalupki\specforge\specforge\core\parser.py:174(_parse_decl)
+        1    0.000    0.000    0.027    0.027 C:\zalupki\specforge\specforge\runtime\runner.py:183(run_tests)
+       72    0.001    0.000    0.021    0.000 C:\zalupki\specforge\specforge\core\parser.py:484(_parse_rule)
+        1    0.000    0.000    0.019    0.019 C:\zalupki\specforge\specforge\runtime\runner.py:108(run)
+       60    0.001    0.000    0.018    0.000 C:\zalupki\specforge\specforge\runtime\runner.py:118(_run_one)
+      433    0.000    0.000    0.016    0.000 C:\zalupki\specforge\specforge\core\parser.py:637(_parse_expr)
+      433    0.000    0.000    0.016    0.000 C:\zalupki\specforge\specforge\core\parser.py:640(_parse_or)
+       72    0.001    0.000    0.016    0.000 C:\zalupki\specforge\specforge\core\parser.py:231(_parse_entity)
+      433    0.000    0.000    0.015    0.000 C:\zalupki\specforge\specforge\core\parser.py:650(_parse_and)
+    23877    0.010    0.000    0.014    0.000 C:\zalupki\specforge\specforge\core\parser.py:49(_tok)
+      433    0.000    0.000    0.014    0.000 C:\zalupki\specforge\specforge\core\parser.py:660(_parse_not)
+     5196    0.005    0.000    0.013    0.000 C:\zalupki\specforge\specforge\core\lexer.py:87(_add)
+      216    0.001    0.000    0.013    0.000 C:\zalupki\specforge\specforge\core\parser.py:256(_parse_field)
+    14423    0.004    0.000    0.013    0.000 C:\zalupki\specforge\specforge\core\parser.py:59(_at)
+      433    0.001    0.000    0.013    0.000 C:\zalupki\specforge\specforge\core\parser.py:667(_parse_comparison)
+      577    0.000    0.000    0.011    0.000 C:\zalupki\specforge\specforge\core\parser.py:718(_parse_additive)
+      577    0.001    0.000    0.010    0.000 C:\zalupki\specforge\specforge\core\parser.py:728(_parse_multiplicative)
+      144    0.000    0.000    0.010    0.000 C:\zalupki\specforge\specforge\core\parser.py:522(_parse_stmt_list)
+       60    0.000    0.000    0.009    0.000 C:\zalupki\specforge\specforge\runtime\engine.py:153(from_program)
+       60    0.000    0.000    0.009    0.000 C:\zalupki\specforge\specforge\runtime\engine.py:133(__init__)
+
+

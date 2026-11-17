@@ -1,0 +1,36 @@
+{
+  "lines": 1009,
+  "optimization_1_lexer": {
+    "naive_ms": 27.11,
+    "optimized_ms": 10.681,
+    "speedup": 2.54,
+    "tokens": 5196
+  },
+  "parse_1000_lines_ms": 18.235,
+  "optimization_2_reverse_index": {
+    "naive_queries_ms": 4.345,
+    "cached_queries_ms": 0.303,
+    "speedup": 14.34,
+    "queries": 100,
+    "requirements": 100,
+    "tests": 60,
+    "nodes": 174
+  },
+  "impact": {
+    "single_impact_ms": 0.473,
+    "selected_tests": 56,
+    "changed_nodes": 1,
+    "affected_nodes": 13
+  },
+  "suite": {
+    "passed": 60,
+    "failed": 0,
+    "duration_ms": 8.41,
+    "digest": "0375c484ef9173fa0cbaf4d12d696245923418ca9a2d1ebf9bd2eb73838f8c0a"
+  },
+  "limits": {
+    "parse_under_100_ms": true,
+    "impact_under_1_s": true,
+    "suite_under_10_s": true
+  }
+}

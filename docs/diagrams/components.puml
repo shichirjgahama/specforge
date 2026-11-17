@@ -1,0 +1,60 @@
+@startuml
+title SpecForge components
+
+package "Presentation" {
+  [tkinter UI\n6 screens] as UI
+  [CLI argparse] as CLI
+}
+
+package "Application" {
+  [SpecForgeService] as SVC
+  [HTML report] as REPORT
+}
+
+package "Language" {
+  [Lexer] as LEX
+  [Parser + recovery] as PAR
+  [Semantic analyzer] as SEM
+  [Validator] as VAL
+  [SpecIndex\nhashes + deps] as NODES
+  [Interpreter] as INT
+  [8 properties] as PROPS
+}
+
+package "Runtime" {
+  [Simulation engine] as ENG
+  [Test generator\n60 tests] as GEN
+  [Deterministic runner] as RUN
+  [Impact analysis] as IMP
+  [Incremental cache] as INC
+}
+
+package "Storage" {
+  [Repository] as REPO
+  [Migrations v1 to v3] as MIG
+  database "SQLite profile DB" as DB
+}
+
+UI --> SVC
+CLI --> SVC
+SVC --> LEX
+LEX --> PAR
+PAR --> SEM
+SEM --> VAL
+SEM --> NODES
+NODES --> IMP
+NODES --> INC
+SVC --> INT
+SVC --> PROPS
+SVC --> ENG
+SVC --> GEN
+GEN --> RUN
+RUN --> ENG
+SVC --> IMP
+IMP --> RUN
+SVC --> REPORT
+SVC --> REPO
+REPO --> MIG
+REPO --> DB
+
+@enduml

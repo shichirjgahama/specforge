@@ -1,0 +1,20 @@
+spec Sem version 1;
+
+enum SE { a, b }
+
+entity X {
+  id: Nope;
+}
+
+role R {
+  may reserve;
+}
+
+rule BAD {
+  when missing.value > 0
+  then {
+    emit "x";
+  }
+}
+
+invariant I always 5 message "five";

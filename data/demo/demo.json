@@ -1,0 +1,5345 @@
+{
+  "baseline": {
+    "passed": 60,
+    "failed": 0,
+    "digest": "0375c484ef9173fa0cbaf4d12d696245923418ca9a2d1ebf9bd2eb73838f8c0a",
+    "results": [
+      {
+        "test_id": "T-001",
+        "kind": "scenario",
+        "title": "Happy path: reserve, rent, return",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.debt": 0,
+          "penalty.count": 0,
+          "rental.state": "closed",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-001",
+          "R-002",
+          "R-003"
+        ],
+        "nodes": [
+          "field:Customer.debt",
+          "field:Customer.deposit",
+          "field:Rental.state",
+          "field:Scooter.battery",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-002",
+        "kind": "scenario",
+        "title": "Cancel a reservation",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "reservation.state": "cancelled",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-017"
+        ],
+        "nodes": [
+          "field:Reservation.state",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "transition:RentalState:draft:cancel",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:reserved:cancel"
+        ]
+      },
+      {
+        "test_id": "T-003",
+        "kind": "scenario",
+        "title": "Reservation expires before rental start",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_RESERVATION_EXPIRED",
+          "reservation.state": "expired",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-015",
+          "R-002"
+        ],
+        "nodes": [
+          "field:Reservation.state",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:reserved:expire"
+        ]
+      },
+      {
+        "test_id": "T-004",
+        "kind": "scenario",
+        "title": "Rental start without reservation",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_NO_RESERVATION",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-020",
+          "R-014"
+        ],
+        "nodes": [
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-03",
+          "rule:BRI-12"
+        ]
+      },
+      {
+        "test_id": "T-005",
+        "kind": "scenario",
+        "title": "Low battery is rejected",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_BATTERY_LOW",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-005"
+        ],
+        "nodes": [
+          "field:Scooter.battery",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01"
+        ]
+      },
+      {
+        "test_id": "T-006",
+        "kind": "scenario",
+        "title": "Battery exactly at the limit is accepted",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "reservation.state": "active",
+          "scooter.state": "reserved"
+        },
+        "requirements": [
+          "R-005"
+        ],
+        "nodes": [
+          "field:Reservation.state",
+          "field:Scooter.battery",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-007",
+        "kind": "scenario",
+        "title": "Deposit below the minimum is rejected",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_DEPOSIT_LOW",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-004"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01"
+        ]
+      },
+      {
+        "test_id": "T-008",
+        "kind": "scenario",
+        "title": "Deposit exactly at the minimum is accepted",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.state": "reserved"
+        },
+        "requirements": [
+          "R-004"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-009",
+        "kind": "scenario",
+        "title": "Maintenance threshold rejects the scooter",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_MAINTENANCE_DUE",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-006"
+        ],
+        "nodes": [
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-11"
+        ]
+      },
+      {
+        "test_id": "T-010",
+        "kind": "scenario",
+        "title": "Mileage below the threshold is accepted",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.state": "reserved"
+        },
+        "requirements": [
+          "R-006"
+        ],
+        "nodes": [
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-011",
+        "kind": "scenario",
+        "title": "One active rental per customer",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_ACTIVE_RENTAL",
+          "rental.state": "active",
+          "scooter.state": "rented"
+        },
+        "requirements": [
+          "R-014"
+        ],
+        "nodes": [
+          "field:Rental.state",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-12",
+          "transition:RentalState:draft:start",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-012",
+        "kind": "scenario",
+        "title": "Late fee for 70 minutes late",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.debt": 500,
+          "penalty.count": 1,
+          "rental.lateFee": 500,
+          "rental.minutesLate": 70
+        },
+        "requirements": [
+          "R-007"
+        ],
+        "nodes": [
+          "field:Customer.debt",
+          "field:Rental.lateFee",
+          "field:Rental.minutesLate",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-013",
+        "kind": "scenario",
+        "title": "Grace period: 10 minutes late is free",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "penalty.count": 0,
+          "rental.lateFee": 0,
+          "rental.minutesLate": 10
+        },
+        "requirements": [
+          "R-007"
+        ],
+        "nodes": [
+          "field:Rental.lateFee",
+          "field:Rental.minutesLate",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-014",
+        "kind": "scenario",
+        "title": "Grace plus one minute costs one hour",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "penalty.count": 1,
+          "rental.lateFee": 500,
+          "rental.minutesLate": 11
+        },
+        "requirements": [
+          "R-007"
+        ],
+        "nodes": [
+          "field:Rental.lateFee",
+          "field:Rental.minutesLate",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-015",
+        "kind": "scenario",
+        "title": "Extremely overdue customer is blocked",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.lateReturns": 1,
+          "customer.status": "blocked",
+          "rental.lateFee": 13000
+        },
+        "requirements": [
+          "R-008"
+        ],
+        "nodes": [
+          "field:Customer.lateReturns",
+          "field:Customer.status",
+          "field:Rental.lateFee",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-016",
+        "kind": "scenario",
+        "title": "Three late returns trigger the blacklist",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.lateReturns": 3,
+          "customer.status": "blocked",
+          "penalty.count": 3
+        },
+        "requirements": [
+          "R-009"
+        ],
+        "nodes": [
+          "field:Customer.lateReturns",
+          "field:Customer.status",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:closed:reopen",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-017",
+        "kind": "scenario",
+        "title": "Lost scooter is charged and blocks the customer",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.status": "blocked",
+          "penalty.total": 25000,
+          "rental.state": "closed",
+          "scooter.state": "lost"
+        },
+        "requirements": [
+          "R-010"
+        ],
+        "nodes": [
+          "field:Customer.status",
+          "field:Rental.state",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-07",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:lost",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-018",
+        "kind": "scenario",
+        "title": "Damage claim inside the window",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "rental.state": "closed"
+        },
+        "requirements": [
+          "R-011"
+        ],
+        "nodes": [
+          "field:Rental.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-08",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-019",
+        "kind": "scenario",
+        "title": "Damage claim after the window",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_CLAIM_LATE",
+          "rental.state": "closed"
+        },
+        "requirements": [
+          "R-011"
+        ],
+        "nodes": [
+          "field:Rental.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-08",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-020",
+        "kind": "scenario",
+        "title": "Service returns the scooter to the pool",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.battery": 100,
+          "scooter.mileageSinceService": 0,
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-016",
+          "R-006"
+        ],
+        "nodes": [
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:maintenance:service",
+          "transition:ScooterState:rented:returnFault",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-021",
+        "kind": "boundary",
+        "title": "Battery 19 is below the minimum",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_BATTERY_LOW",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-005"
+        ],
+        "nodes": [
+          "field:Scooter.battery",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01"
+        ]
+      },
+      {
+        "test_id": "T-022",
+        "kind": "boundary",
+        "title": "Battery 20 is the minimum",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.state": "reserved"
+        },
+        "requirements": [
+          "R-005"
+        ],
+        "nodes": [
+          "field:Scooter.battery",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-023",
+        "kind": "boundary",
+        "title": "Blocked customer cannot reserve",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_CUSTOMER_BLOCKED",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-018"
+        ],
+        "nodes": [
+          "field:Customer.status",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01"
+        ]
+      },
+      {
+        "test_id": "T-024",
+        "kind": "boundary",
+        "title": "Mileage 499 is rentable",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.state": "reserved"
+        },
+        "requirements": [
+          "R-006"
+        ],
+        "nodes": [
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-025",
+        "kind": "boundary",
+        "title": "Mileage 500 needs service",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_MAINTENANCE_DUE",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-006"
+        ],
+        "nodes": [
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-11"
+        ]
+      },
+      {
+        "test_id": "T-026",
+        "kind": "boundary",
+        "title": "Deposit 2999 is rejected",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_DEPOSIT_LOW",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-004"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01"
+        ]
+      },
+      {
+        "test_id": "T-027",
+        "kind": "boundary",
+        "title": "Deposit 3000 is accepted",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.state": "reserved"
+        },
+        "requirements": [
+          "R-004"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-028",
+        "kind": "boundary",
+        "title": "Late 10 minutes is inside the grace",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "late.hours": 0,
+          "rental.lateFee": 0
+        },
+        "requirements": [
+          "R-007"
+        ],
+        "nodes": [
+          "field:Rental.lateFee",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-029",
+        "kind": "boundary",
+        "title": "Late 11 minutes starts the first hour",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "late.hours": 1,
+          "rental.lateFee": 500
+        },
+        "requirements": [
+          "R-007"
+        ],
+        "nodes": [
+          "field:Rental.lateFee",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-030",
+        "kind": "boundary",
+        "title": "Late 130 minutes starts the second hour",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "late.hours": 2,
+          "rental.lateFee": 1000
+        },
+        "requirements": [
+          "R-007"
+        ],
+        "nodes": [
+          "field:Rental.lateFee",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-031",
+        "kind": "boundary",
+        "title": "Reservation is valid at exactly 15 minutes",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "rental.state": "active",
+          "scooter.state": "rented"
+        },
+        "requirements": [
+          "R-015"
+        ],
+        "nodes": [
+          "field:Rental.state",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-12",
+          "transition:RentalState:draft:start",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-032",
+        "kind": "boundary",
+        "title": "Reservation expired at 16 minutes",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_RESERVATION_EXPIRED",
+          "reservation.state": "expired",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-015"
+        ],
+        "nodes": [
+          "field:Reservation.state",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:reserved:expire"
+        ]
+      },
+      {
+        "test_id": "T-033",
+        "kind": "boundary",
+        "title": "Damage claim exactly at 48 hours",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "rental.state": "closed"
+        },
+        "requirements": [
+          "R-011"
+        ],
+        "nodes": [
+          "field:Rental.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-08",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-034",
+        "kind": "boundary",
+        "title": "Damage claim 48 hours and 1 minute",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "E_CLAIM_LATE",
+          "rental.state": "closed"
+        },
+        "requirements": [
+          "R-011"
+        ],
+        "nodes": [
+          "field:Rental.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-08",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-035",
+        "kind": "boundary",
+        "title": "April 30 uses the base price",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "season.multiplier": 100
+        },
+        "requirements": [
+          "R-013"
+        ],
+        "nodes": [
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-10"
+        ]
+      },
+      {
+        "test_id": "T-036",
+        "kind": "boundary",
+        "title": "May 1 uses the seasonal price",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "season.multiplier": 130
+        },
+        "requirements": [
+          "R-013"
+        ],
+        "nodes": [
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-10"
+        ]
+      },
+      {
+        "test_id": "T-037",
+        "kind": "boundary",
+        "title": "Refund deadline skips the weekend",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "payment.total": 3000,
+          "refund.deadline": 7200
+        },
+        "requirements": [
+          "R-012"
+        ],
+        "nodes": [
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-09",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-038",
+        "kind": "boundary",
+        "title": "Battery can reach zero after a return",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.battery": 0,
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-003",
+          "R-005"
+        ],
+        "nodes": [
+          "field:Rental.batteryUsed",
+          "field:Scooter.battery",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-039",
+        "kind": "boundary",
+        "title": "Two late returns stay below the blacklist",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.lateReturns": 2,
+          "customer.status": "active"
+        },
+        "requirements": [
+          "R-009"
+        ],
+        "nodes": [
+          "field:Customer.lateReturns",
+          "field:Customer.status",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:closed:reopen",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-040",
+        "kind": "boundary",
+        "title": "Operator blocks and unblocks a customer",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.status": "active"
+        },
+        "requirements": [
+          "R-019"
+        ],
+        "nodes": [
+          "field:Customer.status",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-05",
+          "rule:BRI-06"
+        ]
+      },
+      {
+        "test_id": "T-041",
+        "kind": "property",
+        "title": "Property scenario seed 1: battery=100, deposit=5000, mileage=0, late=1415",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "rental.state": "closed",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-001",
+          "R-002",
+          "R-003"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Rental.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-042",
+        "kind": "property",
+        "title": "Property scenario seed 2: battery=21, deposit=3001, mileage=0, late=498",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.debt": 0,
+          "rental.lateFee": 0,
+          "rental.minutesLate": 0
+        },
+        "requirements": [
+          "R-007",
+          "R-009"
+        ],
+        "nodes": [
+          "field:Customer.debt",
+          "field:Customer.deposit",
+          "field:Rental.lateFee",
+          "field:Rental.minutesLate",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-043",
+        "kind": "property",
+        "title": "Property scenario seed 3: battery=80, deposit=3001, mileage=490, late=2961",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.mileageSinceService": 0,
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-006",
+          "R-016"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:maintenance:service",
+          "transition:ScooterState:rented:returnFault",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-044",
+        "kind": "property",
+        "title": "Property scenario seed 4: battery=80, deposit=3000, mileage=499, late=2890",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "reservation.state": "active",
+          "scooter.state": "reserved"
+        },
+        "requirements": [
+          "R-005",
+          "R-014"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Reservation.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-045",
+        "kind": "property",
+        "title": "Property scenario seed 5: battery=90, deposit=3500, mileage=0, late=1350",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "rental.state": "closed",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-001",
+          "R-002",
+          "R-003"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Rental.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-046",
+        "kind": "property",
+        "title": "Property scenario seed 6: battery=21, deposit=3001, mileage=499, late=1009",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.debt": 0,
+          "rental.lateFee": 0,
+          "rental.minutesLate": 0
+        },
+        "requirements": [
+          "R-007",
+          "R-009"
+        ],
+        "nodes": [
+          "field:Customer.debt",
+          "field:Customer.deposit",
+          "field:Rental.lateFee",
+          "field:Rental.minutesLate",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:returnFault",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-047",
+        "kind": "property",
+        "title": "Property scenario seed 7: battery=20, deposit=3500, mileage=490, late=1417",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.mileageSinceService": 0,
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-006",
+          "R-016"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:maintenance:service",
+          "transition:ScooterState:rented:returnFault",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-048",
+        "kind": "property",
+        "title": "Property scenario seed 8: battery=80, deposit=3001, mileage=501, late=2122",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "reservation.state": "none",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-005",
+          "R-014"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Reservation.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-11",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-049",
+        "kind": "property",
+        "title": "Property scenario seed 9: battery=55, deposit=3500, mileage=0, late=906",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "rental.state": "closed",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-001",
+          "R-002",
+          "R-003"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Rental.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-050",
+        "kind": "property",
+        "title": "Property scenario seed 10: battery=100, deposit=5000, mileage=0, late=1636",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.debt": 2000,
+          "rental.lateFee": 2000,
+          "rental.minutesLate": 196
+        },
+        "requirements": [
+          "R-007",
+          "R-009"
+        ],
+        "nodes": [
+          "field:Customer.debt",
+          "field:Customer.deposit",
+          "field:Rental.lateFee",
+          "field:Rental.minutesLate",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-051",
+        "kind": "property",
+        "title": "Property scenario seed 11: battery=80, deposit=3000, mileage=490, late=876",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.mileageSinceService": 0,
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-006",
+          "R-016"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:maintenance:service",
+          "transition:ScooterState:rented:returnFault",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-052",
+        "kind": "property",
+        "title": "Property scenario seed 12: battery=5, deposit=5000, mileage=501, late=1985",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "reservation.state": "none",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-005",
+          "R-014"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Reservation.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-11",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-053",
+        "kind": "property",
+        "title": "Property scenario seed 13: battery=100, deposit=3500, mileage=120, late=196",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "rental.state": "closed",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-001",
+          "R-002",
+          "R-003"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Rental.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-054",
+        "kind": "property",
+        "title": "Property scenario seed 14: battery=80, deposit=3001, mileage=120, late=2355",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.debt": 8000,
+          "rental.lateFee": 8000,
+          "rental.minutesLate": 915
+        },
+        "requirements": [
+          "R-007",
+          "R-009"
+        ],
+        "nodes": [
+          "field:Customer.debt",
+          "field:Customer.deposit",
+          "field:Rental.lateFee",
+          "field:Rental.minutesLate",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-055",
+        "kind": "property",
+        "title": "Property scenario seed 15: battery=21, deposit=3000, mileage=490, late=403",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.mileageSinceService": 0,
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-006",
+          "R-016"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:maintenance:service",
+          "transition:ScooterState:rented:returnFault",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-056",
+        "kind": "property",
+        "title": "Property scenario seed 16: battery=100, deposit=2999, mileage=620, late=955",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "reservation.state": "none",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-005",
+          "R-014"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Reservation.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-11",
+          "transition:ScooterState:available:reserve"
+        ]
+      },
+      {
+        "test_id": "T-057",
+        "kind": "property",
+        "title": "Property scenario seed 17: battery=100, deposit=3000, mileage=120, late=831",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "rental.state": "closed",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-001",
+          "R-002",
+          "R-003"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Rental.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-058",
+        "kind": "property",
+        "title": "Property scenario seed 18: battery=90, deposit=5000, mileage=0, late=2272",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "customer.debt": 7000,
+          "rental.lateFee": 7000,
+          "rental.minutesLate": 832
+        },
+        "requirements": [
+          "R-007",
+          "R-009"
+        ],
+        "nodes": [
+          "field:Customer.debt",
+          "field:Customer.deposit",
+          "field:Rental.lateFee",
+          "field:Rental.minutesLate",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-06",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:rented:return",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-059",
+        "kind": "property",
+        "title": "Property scenario seed 19: battery=55, deposit=3000, mileage=490, late=21",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "scooter.mileageSinceService": 0,
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-006",
+          "R-016"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-02",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-11",
+          "rule:BRI-12",
+          "transition:RentalState:active:close",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:maintenance:service",
+          "transition:ScooterState:rented:returnFault",
+          "transition:ScooterState:reserved:rent"
+        ]
+      },
+      {
+        "test_id": "T-060",
+        "kind": "property",
+        "title": "Property scenario seed 20: battery=19, deposit=3001, mileage=500, late=2012",
+        "status": "passed",
+        "message": "",
+        "actual": {
+          "error": "",
+          "reservation.state": "none",
+          "scooter.state": "available"
+        },
+        "requirements": [
+          "R-005",
+          "R-014"
+        ],
+        "nodes": [
+          "field:Customer.deposit",
+          "field:Reservation.state",
+          "field:Scooter.battery",
+          "field:Scooter.mileageSinceService",
+          "field:Scooter.state",
+          "invariant:INV-01",
+          "invariant:INV-02",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-05",
+          "invariant:INV-06",
+          "invariant:INV-07",
+          "invariant:INV-08",
+          "rule:BRI-01",
+          "rule:BRI-11",
+          "transition:ScooterState:available:reserve"
+        ]
+      }
+    ]
+  },
+  "change_requests": {
+    "CR-001": {
+      "plan": {
+        "cr_id": "CR-001",
+        "changed_nodes": [
+          "const:graceMinutes",
+          "entity:Penalty",
+          "entity:Rental",
+          "entity:Tariff",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-06",
+          "invariant:INV-08",
+          "rule:BRI-04",
+          "scenario:LateFeeCalculation",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:overdue:close"
+        ],
+        "affected_nodes": [
+          "const:graceMinutes",
+          "entity:Penalty",
+          "entity:Rental",
+          "entity:Tariff",
+          "invariant:INV-03",
+          "invariant:INV-04",
+          "invariant:INV-06",
+          "invariant:INV-08",
+          "rule:BRI-04",
+          "scenario:LateFeeCalculation",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:overdue:close"
+        ],
+        "affected_requirements": [
+          "R-003",
+          "R-004",
+          "R-007",
+          "R-008",
+          "R-010",
+          "R-011",
+          "R-014",
+          "R-020"
+        ],
+        "tests": [
+          "T-001",
+          "T-012",
+          "T-013",
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-019",
+          "T-020",
+          "T-028",
+          "T-029",
+          "T-030",
+          "T-033",
+          "T-034",
+          "T-037",
+          "T-038",
+          "T-039",
+          "T-041",
+          "T-042",
+          "T-043",
+          "T-045",
+          "T-046",
+          "T-047",
+          "T-049",
+          "T-050",
+          "T-051",
+          "T-053",
+          "T-054",
+          "T-055",
+          "T-057",
+          "T-058",
+          "T-059"
+        ],
+        "reasons": {
+          "T-001": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-012": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-013": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-014": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-015": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-016": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-017": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-018": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-019": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-020": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-028": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-029": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-030": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-033": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-034": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-037": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-038": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-039": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-041": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-042": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-043": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-045": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-046": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-047": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-049": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-050": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-051": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-053": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-054": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-055": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-057": [
+            "spec nodes: rule:BRI-04"
+          ],
+          "T-058": [
+            "spec nodes: rule:BRI-04",
+            "requirements: R-007"
+          ],
+          "T-059": [
+            "spec nodes: rule:BRI-04"
+          ]
+        },
+        "regenerate": [
+          "T-001",
+          "T-012",
+          "T-013",
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-019",
+          "T-020",
+          "T-028",
+          "T-029",
+          "T-030",
+          "T-033",
+          "T-034",
+          "T-037",
+          "T-038",
+          "T-039",
+          "T-041",
+          "T-042",
+          "T-043",
+          "T-045",
+          "T-046",
+          "T-047",
+          "T-049",
+          "T-050",
+          "T-051",
+          "T-053",
+          "T-054",
+          "T-055",
+          "T-057",
+          "T-058",
+          "T-059"
+        ],
+        "conflicts": [],
+        "spec_hash_before": "31d1953db2ef719043980560de9ef2a5f94f41f469f13223d7201afc935635e9",
+        "spec_hash_after": "f1b4716dad00c8bcb4aa683dc84d3e15ca7651bd7be221d9a55d1a7ae9fb216b",
+        "nodes_total": 174,
+        "tests_total": 60,
+        "percent_nodes": 6.9,
+        "notes": [
+          "11 tests selected by requirement text only"
+        ]
+      },
+      "minimality": {
+        "equal": true,
+        "subset_failed": [
+          "T-012",
+          "T-013",
+          "T-028",
+          "T-030"
+        ],
+        "full_failed": [
+          "T-012",
+          "T-013",
+          "T-028",
+          "T-030"
+        ],
+        "missed": [],
+        "extra": [],
+        "selected": 33,
+        "selected_passed": [
+          "T-001",
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-019",
+          "T-020",
+          "T-029",
+          "T-033",
+          "T-034",
+          "T-037",
+          "T-038",
+          "T-039",
+          "T-041",
+          "T-042",
+          "T-043",
+          "T-045",
+          "T-046",
+          "T-047",
+          "T-049",
+          "T-050",
+          "T-051",
+          "T-053",
+          "T-054",
+          "T-055",
+          "T-057",
+          "T-058",
+          "T-059"
+        ],
+        "total": 60,
+        "subset_digest": "864542834e04f9eee24c1f1b63633e6756c0da9d00a296b4c27400bed2609851",
+        "full_digest": "b78c7c309be1dc6f1298b7c58d0df52a9256a2d7c515b3ab1b97a3efa1eba113",
+        "subset_duration_ms": 2.967,
+        "full_duration_ms": 4.0
+      },
+      "requirements": [
+        {
+          "id": "R-001",
+          "version": 1,
+          "title": "Reserve an available scooter",
+          "story": "As a customer I want to reserve an available scooter so that it is waiting for me at the station for a short time.",
+          "criteria": [
+            "A reservation is created only for a scooter in state available.",
+            "The reservation expires 15 minutes after creation.",
+            "While reserved the scooter cannot be reserved by another customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-002",
+          "version": 1,
+          "title": "Start a rental from a reservation",
+          "story": "As a customer I want to start a rental from my active reservation so that I can ride within the reservation window.",
+          "criteria": [
+            "The rental starts only when the reservation is active and not expired.",
+            "The scooter moves from reserved to rented.",
+            "A rental deadline is set 24 hours after the start."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-003",
+          "version": 1,
+          "title": "Return a scooter and close the rental",
+          "story": "As a customer I want to return a scooter at any station so that the rental is closed and the scooter becomes available again.",
+          "criteria": [
+            "Return closes the rental and records the return time.",
+            "A serviceable scooter returns to state available.",
+            "Battery and mileage are updated after the return."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-004",
+          "version": 1,
+          "title": "Deposit is required before the first rental",
+          "story": "As a service owner I want a deposit of 3000 rubles before a rental so that damage and lost scooters are covered.",
+          "criteria": [
+            "Reservation is rejected when the deposit is below 3000.",
+            "A deposit of exactly 3000 is accepted.",
+            "The deposit is a non negative amount at all times."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-005",
+          "version": 1,
+          "title": "Reject a scooter with a low battery",
+          "story": "As a customer I must not receive a scooter with less than 20 percent battery so that I do not get stranded.",
+          "criteria": [
+            "Battery 19 percent is rejected with E_BATTERY_LOW.",
+            "Battery exactly 20 percent is accepted.",
+            "The rejection leaves the scooter in its previous state."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-006",
+          "version": 1,
+          "title": "Reject a scooter that needs maintenance",
+          "story": "As an operator I want scooters with 500 km since the last service to leave the fleet so that safety is not compromised.",
+          "criteria": [
+            "Mileage 499 km is still rentable.",
+            "Mileage 500 km or more is rejected with E_MAINTENANCE_DUE.",
+            "After a return that crosses 500 km the scooter goes to maintenance."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-007",
+          "version": 2,
+          "title": "Charge a late return fee",
+          "story": "As a service owner I want a fee of 500 rubles per started hour after a 10 minute grace period so that late returns are discouraged.",
+          "criteria": [
+            "A return within 10 minutes after the deadline costs nothing.",
+            "11 minutes late costs 500 rubles, 70 minutes late costs 500 rubles.",
+            "130 minutes late costs 1000 rubles because the second hour has started.",
+            "CR-001: the grace period is 5 minutes starting from version 2.",
+            "CR-001: 6 minutes late costs 500 rubles."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Grace period reduced by CR-001.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-008",
+          "version": 1,
+          "title": "Block an extremely overdue customer",
+          "story": "As a service owner I want a customer who is more than 24 hours late to be blocked for 7 days so that abandoned rentals are prevented.",
+          "criteria": [
+            "A rental returned 25 hours late blocks the customer.",
+            "The block lasts 7 days from the return.",
+            "A blocked customer cannot create new rentals."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-009",
+          "version": 1,
+          "title": "Blacklist after three late returns",
+          "story": "As a service owner I want a customer with three late returns inside 30 days to be blocked so that repeated violations have consequences.",
+          "criteria": [
+            "Two late returns in the window do not block the customer.",
+            "The third late return inside 30 days blocks the account.",
+            "Returns older than 30 days do not count toward the limit."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-010",
+          "version": 1,
+          "title": "Charge for a lost scooter",
+          "story": "As a service owner I want a lost scooter to cost 25000 rubles and block the customer so that losses are compensated.",
+          "criteria": [
+            "A lost report is accepted only during an active rental.",
+            "A penalty of 25000 rubles is created.",
+            "The customer is blocked and the scooter is in state lost."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-011",
+          "version": 1,
+          "title": "Damage claim window is 48 hours",
+          "story": "As a customer I want to report damage within 48 hours after the return so that late claims do not reopen old rentals.",
+          "criteria": [
+            "A claim exactly 48 hours after the return is accepted.",
+            "A claim 48 hours and 1 minute after the return is rejected with E_CLAIM_LATE.",
+            "A claim is possible only for a closed rental."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-012",
+          "version": 1,
+          "title": "Refund the deposit within three business days",
+          "story": "As a customer I want my deposit refunded no later than three business days after the rental is closed so that money is not held forever.",
+          "criteria": [
+            "A refund is blocked while a rental is active.",
+            "A refund is blocked while penalties are unpaid.",
+            "The refund deadline skips weekends."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-013",
+          "version": 1,
+          "title": "Seasonal price coefficient",
+          "story": "As a service owner I want a 130 percent coefficient from May to September so that high season demand is balanced.",
+          "criteria": [
+            "April 30 uses coefficient 100.",
+            "May 1 uses coefficient 130.",
+            "The coefficient applies to the rental price only."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-014",
+          "version": 1,
+          "title": "Only one active rental per customer",
+          "story": "As a service owner I want a customer to hold at most one active rental so that scooters are not hoarded.",
+          "criteria": [
+            "A second reservation during an active rental is rejected.",
+            "After the rental is closed a new reservation is possible.",
+            "The rejection is reported as E_ACTIVE_RENTAL."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-015",
+          "version": 1,
+          "title": "Reservation expires after 15 minutes",
+          "story": "As a service owner I want unused reservations to expire so that scooters return to the pool quickly.",
+          "criteria": [
+            "A start exactly 15 minutes after reservation is accepted.",
+            "A start 16 minutes after reservation fails with E_RESERVATION_EXPIRED.",
+            "An expired reservation frees the scooter."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-016",
+          "version": 1,
+          "title": "Finish maintenance and return to service",
+          "story": "As an operator I want to finish maintenance so that a serviced scooter is available and its mileage counter is reset.",
+          "criteria": [
+            "Service is allowed only for a scooter in maintenance.",
+            "Mileage resets to zero and battery to 100 percent.",
+            "The scooter becomes available for the next customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-017",
+          "version": 1,
+          "title": "Cancel a reservation",
+          "story": "As a customer I want to cancel a reservation before it expires so that the scooter is released immediately.",
+          "criteria": [
+            "Cancel moves the scooter from reserved to available.",
+            "Cancel clears the reservation deadline.",
+            "Cancel is not possible for a rented scooter."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-018",
+          "version": 1,
+          "title": "Blocked customer cannot start a rental",
+          "story": "As a service owner I want a blocked customer to be unable to reserve or rent so that debt and violations are resolved first.",
+          "criteria": [
+            "A blocked customer receives E_CUSTOMER_BLOCKED.",
+            "Reservation and rental start are both rejected.",
+            "The scooter stays available."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-019",
+          "version": 1,
+          "title": "Operator manages customer blocks",
+          "story": "As an operator I want to block and unblock a customer manually so that support cases can be resolved without developer help.",
+          "criteria": [
+            "Only Operator and Admin roles may block a customer.",
+            "A customer cannot block another customer.",
+            "Unblock returns the account to active."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-020",
+          "version": 1,
+          "title": "Invalid operations never change state",
+          "story": "As a developer I want an invalid operation to return a domain error and leave the world unchanged so that failed requests are safe to retry.",
+          "criteria": [
+            "A rental start without a reservation returns E_NO_RESERVATION.",
+            "An unknown operation returns E_UNKNOWN_OP.",
+            "A rejected operation does not create penalties or payments."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        }
+      ]
+    },
+    "CR-002": {
+      "plan": {
+        "cr_id": "CR-002",
+        "changed_nodes": [
+          "const:minBattery",
+          "entity:Scooter",
+          "invariant:INV-02",
+          "rule:BRI-01",
+          "scenario:BatteryBoundary",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:reserved:rent"
+        ],
+        "affected_nodes": [
+          "const:minBattery",
+          "entity:Scooter",
+          "invariant:INV-02",
+          "rule:BRI-01",
+          "scenario:BatteryBoundary",
+          "scenario:BlacklistAfterThreeLateReturns",
+          "scenario:ClaimWindow",
+          "scenario:ForbiddenStart",
+          "scenario:HappyPath",
+          "scenario:LateFeeCalculation",
+          "scenario:LostScooter",
+          "scenario:MaintenanceBoundary",
+          "scenario:ReservationExpiry",
+          "transition:ScooterState:available:reserve",
+          "transition:ScooterState:reserved:rent"
+        ],
+        "affected_requirements": [
+          "R-001",
+          "R-002",
+          "R-003",
+          "R-004",
+          "R-005",
+          "R-006",
+          "R-007",
+          "R-009",
+          "R-010",
+          "R-011",
+          "R-014",
+          "R-015",
+          "R-016",
+          "R-020"
+        ],
+        "tests": [
+          "T-001",
+          "T-002",
+          "T-003",
+          "T-005",
+          "T-006",
+          "T-007",
+          "T-008",
+          "T-009",
+          "T-010",
+          "T-011",
+          "T-012",
+          "T-013",
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-019",
+          "T-020",
+          "T-021",
+          "T-022",
+          "T-023",
+          "T-024",
+          "T-025",
+          "T-026",
+          "T-027",
+          "T-028",
+          "T-029",
+          "T-030",
+          "T-031",
+          "T-032",
+          "T-033",
+          "T-034",
+          "T-037",
+          "T-038",
+          "T-039",
+          "T-041",
+          "T-042",
+          "T-043",
+          "T-044",
+          "T-045",
+          "T-046",
+          "T-047",
+          "T-048",
+          "T-049",
+          "T-050",
+          "T-051",
+          "T-052",
+          "T-053",
+          "T-054",
+          "T-055",
+          "T-056",
+          "T-057",
+          "T-058",
+          "T-059",
+          "T-060"
+        ],
+        "reasons": {
+          "T-001": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-002": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve"
+          ],
+          "T-003": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve"
+          ],
+          "T-005": [
+            "spec nodes: rule:BRI-01",
+            "requirements: R-005"
+          ],
+          "T-006": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve",
+            "requirements: R-005"
+          ],
+          "T-007": [
+            "spec nodes: rule:BRI-01"
+          ],
+          "T-008": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve"
+          ],
+          "T-009": [
+            "spec nodes: rule:BRI-01"
+          ],
+          "T-010": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve"
+          ],
+          "T-011": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-012": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-013": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-014": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-015": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-016": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-017": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-018": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-019": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-020": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-021": [
+            "spec nodes: rule:BRI-01",
+            "requirements: R-005"
+          ],
+          "T-022": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve",
+            "requirements: R-005"
+          ],
+          "T-023": [
+            "spec nodes: rule:BRI-01"
+          ],
+          "T-024": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve"
+          ],
+          "T-025": [
+            "spec nodes: rule:BRI-01"
+          ],
+          "T-026": [
+            "spec nodes: rule:BRI-01"
+          ],
+          "T-027": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve"
+          ],
+          "T-028": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-029": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-030": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-031": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-032": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve"
+          ],
+          "T-033": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-034": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-037": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-038": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent",
+            "requirements: R-005"
+          ],
+          "T-039": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-041": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-042": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-043": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-044": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve",
+            "requirements: R-005"
+          ],
+          "T-045": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-046": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-047": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-048": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve",
+            "requirements: R-005"
+          ],
+          "T-049": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-050": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-051": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-052": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve",
+            "requirements: R-005"
+          ],
+          "T-053": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-054": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-055": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-056": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve",
+            "requirements: R-005"
+          ],
+          "T-057": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-058": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-059": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve, transition:ScooterState:reserved:rent"
+          ],
+          "T-060": [
+            "spec nodes: rule:BRI-01, transition:ScooterState:available:reserve",
+            "requirements: R-005"
+          ]
+        },
+        "regenerate": [
+          "T-001",
+          "T-002",
+          "T-003",
+          "T-005",
+          "T-006",
+          "T-007",
+          "T-008",
+          "T-009",
+          "T-010",
+          "T-011",
+          "T-012",
+          "T-013",
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-019",
+          "T-020",
+          "T-021",
+          "T-022",
+          "T-023",
+          "T-024",
+          "T-025",
+          "T-026",
+          "T-027",
+          "T-028",
+          "T-029",
+          "T-030",
+          "T-031",
+          "T-032",
+          "T-033",
+          "T-034",
+          "T-037",
+          "T-038",
+          "T-039",
+          "T-041",
+          "T-042",
+          "T-043",
+          "T-044",
+          "T-045",
+          "T-046",
+          "T-047",
+          "T-048",
+          "T-049",
+          "T-050",
+          "T-051",
+          "T-052",
+          "T-053",
+          "T-054",
+          "T-055",
+          "T-056",
+          "T-057",
+          "T-058",
+          "T-059",
+          "T-060"
+        ],
+        "conflicts": [],
+        "spec_hash_before": "31d1953db2ef719043980560de9ef2a5f94f41f469f13223d7201afc935635e9",
+        "spec_hash_after": "9f31e7cb5ee7014ebbc443bc39c349ff1517438c3301036ef28200f991702a61",
+        "nodes_total": 174,
+        "tests_total": 60,
+        "percent_nodes": 8.62,
+        "notes": [
+          "10 tests selected by requirement text only"
+        ]
+      },
+      "minimality": {
+        "equal": true,
+        "subset_failed": [
+          "T-006",
+          "T-022",
+          "T-042",
+          "T-046",
+          "T-047",
+          "T-055"
+        ],
+        "full_failed": [
+          "T-006",
+          "T-022",
+          "T-042",
+          "T-046",
+          "T-047",
+          "T-055"
+        ],
+        "missed": [],
+        "extra": [],
+        "selected": 56,
+        "selected_passed": [
+          "T-001",
+          "T-002",
+          "T-003",
+          "T-005",
+          "T-007",
+          "T-008",
+          "T-009",
+          "T-010",
+          "T-011",
+          "T-012",
+          "T-013",
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-019",
+          "T-020",
+          "T-021",
+          "T-023",
+          "T-024",
+          "T-025",
+          "T-026",
+          "T-027",
+          "T-028",
+          "T-029",
+          "T-030",
+          "T-031",
+          "T-032",
+          "T-033",
+          "T-034",
+          "T-037",
+          "T-038",
+          "T-039",
+          "T-041",
+          "T-043",
+          "T-044",
+          "T-045",
+          "T-048",
+          "T-049",
+          "T-050",
+          "T-051",
+          "T-052",
+          "T-053",
+          "T-054",
+          "T-056",
+          "T-057",
+          "T-058",
+          "T-059",
+          "T-060"
+        ],
+        "total": 60,
+        "subset_digest": "893e6e7ab77aa0dd087663c45107faf3f5798ec211987fd24d05cedf7d1b6e42",
+        "full_digest": "8dba0ccaa309e0fef4ec4f840e0f4a89baa21dffc4b7b7f9d03ead86fe37941b",
+        "subset_duration_ms": 4.45,
+        "full_duration_ms": 4.111
+      },
+      "requirements": [
+        {
+          "id": "R-001",
+          "version": 1,
+          "title": "Reserve an available scooter",
+          "story": "As a customer I want to reserve an available scooter so that it is waiting for me at the station for a short time.",
+          "criteria": [
+            "A reservation is created only for a scooter in state available.",
+            "The reservation expires 15 minutes after creation.",
+            "While reserved the scooter cannot be reserved by another customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-002",
+          "version": 1,
+          "title": "Start a rental from a reservation",
+          "story": "As a customer I want to start a rental from my active reservation so that I can ride within the reservation window.",
+          "criteria": [
+            "The rental starts only when the reservation is active and not expired.",
+            "The scooter moves from reserved to rented.",
+            "A rental deadline is set 24 hours after the start."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-003",
+          "version": 1,
+          "title": "Return a scooter and close the rental",
+          "story": "As a customer I want to return a scooter at any station so that the rental is closed and the scooter becomes available again.",
+          "criteria": [
+            "Return closes the rental and records the return time.",
+            "A serviceable scooter returns to state available.",
+            "Battery and mileage are updated after the return."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-004",
+          "version": 1,
+          "title": "Deposit is required before the first rental",
+          "story": "As a service owner I want a deposit of 3000 rubles before a rental so that damage and lost scooters are covered.",
+          "criteria": [
+            "Reservation is rejected when the deposit is below 3000.",
+            "A deposit of exactly 3000 is accepted.",
+            "The deposit is a non negative amount at all times."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-005",
+          "version": 2,
+          "title": "Reject a scooter with a low battery",
+          "story": "As a customer I must not receive a scooter with less than 20 percent battery so that I do not get stranded.",
+          "criteria": [
+            "Battery 19 percent is rejected with E_BATTERY_LOW.",
+            "Battery exactly 20 percent is accepted.",
+            "The rejection leaves the scooter in its previous state.",
+            "CR-002: battery 24 percent is rejected.",
+            "CR-002: battery 25 percent is accepted."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Minimum battery raised by CR-002.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-006",
+          "version": 1,
+          "title": "Reject a scooter that needs maintenance",
+          "story": "As an operator I want scooters with 500 km since the last service to leave the fleet so that safety is not compromised.",
+          "criteria": [
+            "Mileage 499 km is still rentable.",
+            "Mileage 500 km or more is rejected with E_MAINTENANCE_DUE.",
+            "After a return that crosses 500 km the scooter goes to maintenance."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-007",
+          "version": 2,
+          "title": "Charge a late return fee",
+          "story": "As a service owner I want a fee of 500 rubles per started hour after a 10 minute grace period so that late returns are discouraged.",
+          "criteria": [
+            "A return within 10 minutes after the deadline costs nothing.",
+            "11 minutes late costs 500 rubles, 70 minutes late costs 500 rubles.",
+            "130 minutes late costs 1000 rubles because the second hour has started.",
+            "CR-001: the grace period is 5 minutes starting from version 2.",
+            "CR-001: 6 minutes late costs 500 rubles."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Grace period reduced by CR-001.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-008",
+          "version": 1,
+          "title": "Block an extremely overdue customer",
+          "story": "As a service owner I want a customer who is more than 24 hours late to be blocked for 7 days so that abandoned rentals are prevented.",
+          "criteria": [
+            "A rental returned 25 hours late blocks the customer.",
+            "The block lasts 7 days from the return.",
+            "A blocked customer cannot create new rentals."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-009",
+          "version": 1,
+          "title": "Blacklist after three late returns",
+          "story": "As a service owner I want a customer with three late returns inside 30 days to be blocked so that repeated violations have consequences.",
+          "criteria": [
+            "Two late returns in the window do not block the customer.",
+            "The third late return inside 30 days blocks the account.",
+            "Returns older than 30 days do not count toward the limit."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-010",
+          "version": 1,
+          "title": "Charge for a lost scooter",
+          "story": "As a service owner I want a lost scooter to cost 25000 rubles and block the customer so that losses are compensated.",
+          "criteria": [
+            "A lost report is accepted only during an active rental.",
+            "A penalty of 25000 rubles is created.",
+            "The customer is blocked and the scooter is in state lost."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-011",
+          "version": 1,
+          "title": "Damage claim window is 48 hours",
+          "story": "As a customer I want to report damage within 48 hours after the return so that late claims do not reopen old rentals.",
+          "criteria": [
+            "A claim exactly 48 hours after the return is accepted.",
+            "A claim 48 hours and 1 minute after the return is rejected with E_CLAIM_LATE.",
+            "A claim is possible only for a closed rental."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-012",
+          "version": 1,
+          "title": "Refund the deposit within three business days",
+          "story": "As a customer I want my deposit refunded no later than three business days after the rental is closed so that money is not held forever.",
+          "criteria": [
+            "A refund is blocked while a rental is active.",
+            "A refund is blocked while penalties are unpaid.",
+            "The refund deadline skips weekends."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-013",
+          "version": 1,
+          "title": "Seasonal price coefficient",
+          "story": "As a service owner I want a 130 percent coefficient from May to September so that high season demand is balanced.",
+          "criteria": [
+            "April 30 uses coefficient 100.",
+            "May 1 uses coefficient 130.",
+            "The coefficient applies to the rental price only."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-014",
+          "version": 1,
+          "title": "Only one active rental per customer",
+          "story": "As a service owner I want a customer to hold at most one active rental so that scooters are not hoarded.",
+          "criteria": [
+            "A second reservation during an active rental is rejected.",
+            "After the rental is closed a new reservation is possible.",
+            "The rejection is reported as E_ACTIVE_RENTAL."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-015",
+          "version": 1,
+          "title": "Reservation expires after 15 minutes",
+          "story": "As a service owner I want unused reservations to expire so that scooters return to the pool quickly.",
+          "criteria": [
+            "A start exactly 15 minutes after reservation is accepted.",
+            "A start 16 minutes after reservation fails with E_RESERVATION_EXPIRED.",
+            "An expired reservation frees the scooter."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-016",
+          "version": 1,
+          "title": "Finish maintenance and return to service",
+          "story": "As an operator I want to finish maintenance so that a serviced scooter is available and its mileage counter is reset.",
+          "criteria": [
+            "Service is allowed only for a scooter in maintenance.",
+            "Mileage resets to zero and battery to 100 percent.",
+            "The scooter becomes available for the next customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-017",
+          "version": 1,
+          "title": "Cancel a reservation",
+          "story": "As a customer I want to cancel a reservation before it expires so that the scooter is released immediately.",
+          "criteria": [
+            "Cancel moves the scooter from reserved to available.",
+            "Cancel clears the reservation deadline.",
+            "Cancel is not possible for a rented scooter."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-018",
+          "version": 1,
+          "title": "Blocked customer cannot start a rental",
+          "story": "As a service owner I want a blocked customer to be unable to reserve or rent so that debt and violations are resolved first.",
+          "criteria": [
+            "A blocked customer receives E_CUSTOMER_BLOCKED.",
+            "Reservation and rental start are both rejected.",
+            "The scooter stays available."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-019",
+          "version": 1,
+          "title": "Operator manages customer blocks",
+          "story": "As an operator I want to block and unblock a customer manually so that support cases can be resolved without developer help.",
+          "criteria": [
+            "Only Operator and Admin roles may block a customer.",
+            "A customer cannot block another customer.",
+            "Unblock returns the account to active."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-020",
+          "version": 1,
+          "title": "Invalid operations never change state",
+          "story": "As a developer I want an invalid operation to return a domain error and leave the world unchanged so that failed requests are safe to retry.",
+          "criteria": [
+            "A rental start without a reservation returns E_NO_RESERVATION.",
+            "An unknown operation returns E_UNKNOWN_OP.",
+            "A rejected operation does not create penalties or payments."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        }
+      ]
+    },
+    "CR-003": {
+      "plan": {
+        "cr_id": "CR-003",
+        "changed_nodes": [
+          "const:damageClaimHours",
+          "entity:DamageClaim",
+          "entity:Rental",
+          "entity:Scooter",
+          "rule:BRI-08",
+          "scenario:ClaimWindow",
+          "transition:RentalState:active:dispute",
+          "transition:RentalState:overdue:dispute"
+        ],
+        "affected_nodes": [
+          "const:damageClaimHours",
+          "entity:DamageClaim",
+          "entity:Rental",
+          "entity:Scooter",
+          "rule:BRI-08",
+          "scenario:ClaimWindow",
+          "transition:RentalState:active:dispute",
+          "transition:RentalState:overdue:dispute"
+        ],
+        "affected_requirements": [
+          "R-003",
+          "R-005",
+          "R-006",
+          "R-007",
+          "R-008",
+          "R-011",
+          "R-014",
+          "R-016",
+          "R-020"
+        ],
+        "tests": [
+          "T-018",
+          "T-019",
+          "T-033",
+          "T-034"
+        ],
+        "reasons": {
+          "T-018": [
+            "spec nodes: rule:BRI-08",
+            "requirements: R-011"
+          ],
+          "T-019": [
+            "spec nodes: rule:BRI-08",
+            "requirements: R-011"
+          ],
+          "T-033": [
+            "spec nodes: rule:BRI-08",
+            "requirements: R-011"
+          ],
+          "T-034": [
+            "spec nodes: rule:BRI-08",
+            "requirements: R-011"
+          ]
+        },
+        "regenerate": [
+          "T-018",
+          "T-019",
+          "T-033",
+          "T-034"
+        ],
+        "conflicts": [],
+        "spec_hash_before": "31d1953db2ef719043980560de9ef2a5f94f41f469f13223d7201afc935635e9",
+        "spec_hash_after": "29ad8fe47a61adb14136b80afd36016a2d828b705a352008595af1501f7843a6",
+        "nodes_total": 174,
+        "tests_total": 60,
+        "percent_nodes": 4.6,
+        "notes": [
+          "4 tests selected by requirement text only"
+        ]
+      },
+      "minimality": {
+        "equal": true,
+        "subset_failed": [
+          "T-033"
+        ],
+        "full_failed": [
+          "T-033"
+        ],
+        "missed": [],
+        "extra": [],
+        "selected": 4,
+        "selected_passed": [
+          "T-018",
+          "T-019",
+          "T-034"
+        ],
+        "total": 60,
+        "subset_digest": "ecc13ffc0b444e478cb90660cfd00209b6c5339178be7b8dbbc38cba980cd06e",
+        "full_digest": "6d7a57d7053f0e15c7df44909c972bf4ed8cafcd8bd38d29a848f75a3520dd77",
+        "subset_duration_ms": 0.56,
+        "full_duration_ms": 4.271
+      },
+      "requirements": [
+        {
+          "id": "R-001",
+          "version": 1,
+          "title": "Reserve an available scooter",
+          "story": "As a customer I want to reserve an available scooter so that it is waiting for me at the station for a short time.",
+          "criteria": [
+            "A reservation is created only for a scooter in state available.",
+            "The reservation expires 15 minutes after creation.",
+            "While reserved the scooter cannot be reserved by another customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-002",
+          "version": 1,
+          "title": "Start a rental from a reservation",
+          "story": "As a customer I want to start a rental from my active reservation so that I can ride within the reservation window.",
+          "criteria": [
+            "The rental starts only when the reservation is active and not expired.",
+            "The scooter moves from reserved to rented.",
+            "A rental deadline is set 24 hours after the start."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-003",
+          "version": 1,
+          "title": "Return a scooter and close the rental",
+          "story": "As a customer I want to return a scooter at any station so that the rental is closed and the scooter becomes available again.",
+          "criteria": [
+            "Return closes the rental and records the return time.",
+            "A serviceable scooter returns to state available.",
+            "Battery and mileage are updated after the return."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-004",
+          "version": 1,
+          "title": "Deposit is required before the first rental",
+          "story": "As a service owner I want a deposit of 3000 rubles before a rental so that damage and lost scooters are covered.",
+          "criteria": [
+            "Reservation is rejected when the deposit is below 3000.",
+            "A deposit of exactly 3000 is accepted.",
+            "The deposit is a non negative amount at all times."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-005",
+          "version": 2,
+          "title": "Reject a scooter with a low battery",
+          "story": "As a customer I must not receive a scooter with less than 20 percent battery so that I do not get stranded.",
+          "criteria": [
+            "Battery 19 percent is rejected with E_BATTERY_LOW.",
+            "Battery exactly 20 percent is accepted.",
+            "The rejection leaves the scooter in its previous state.",
+            "CR-002: battery 24 percent is rejected.",
+            "CR-002: battery 25 percent is accepted."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Minimum battery raised by CR-002.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-006",
+          "version": 1,
+          "title": "Reject a scooter that needs maintenance",
+          "story": "As an operator I want scooters with 500 km since the last service to leave the fleet so that safety is not compromised.",
+          "criteria": [
+            "Mileage 499 km is still rentable.",
+            "Mileage 500 km or more is rejected with E_MAINTENANCE_DUE.",
+            "After a return that crosses 500 km the scooter goes to maintenance."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-007",
+          "version": 2,
+          "title": "Charge a late return fee",
+          "story": "As a service owner I want a fee of 500 rubles per started hour after a 10 minute grace period so that late returns are discouraged.",
+          "criteria": [
+            "A return within 10 minutes after the deadline costs nothing.",
+            "11 minutes late costs 500 rubles, 70 minutes late costs 500 rubles.",
+            "130 minutes late costs 1000 rubles because the second hour has started.",
+            "CR-001: the grace period is 5 minutes starting from version 2.",
+            "CR-001: 6 minutes late costs 500 rubles."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Grace period reduced by CR-001.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-008",
+          "version": 1,
+          "title": "Block an extremely overdue customer",
+          "story": "As a service owner I want a customer who is more than 24 hours late to be blocked for 7 days so that abandoned rentals are prevented.",
+          "criteria": [
+            "A rental returned 25 hours late blocks the customer.",
+            "The block lasts 7 days from the return.",
+            "A blocked customer cannot create new rentals."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-009",
+          "version": 1,
+          "title": "Blacklist after three late returns",
+          "story": "As a service owner I want a customer with three late returns inside 30 days to be blocked so that repeated violations have consequences.",
+          "criteria": [
+            "Two late returns in the window do not block the customer.",
+            "The third late return inside 30 days blocks the account.",
+            "Returns older than 30 days do not count toward the limit."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-010",
+          "version": 1,
+          "title": "Charge for a lost scooter",
+          "story": "As a service owner I want a lost scooter to cost 25000 rubles and block the customer so that losses are compensated.",
+          "criteria": [
+            "A lost report is accepted only during an active rental.",
+            "A penalty of 25000 rubles is created.",
+            "The customer is blocked and the scooter is in state lost."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-011",
+          "version": 2,
+          "title": "Damage claim window is 48 hours",
+          "story": "As a customer I want to report damage within 48 hours after the return so that late claims do not reopen old rentals.",
+          "criteria": [
+            "A claim exactly 48 hours after the return is accepted.",
+            "A claim 48 hours and 1 minute after the return is rejected with E_CLAIM_LATE.",
+            "A claim is possible only for a closed rental.",
+            "CR-003: a claim 24 hours and 1 minute after return is rejected."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Claim window reduced by CR-003.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-012",
+          "version": 1,
+          "title": "Refund the deposit within three business days",
+          "story": "As a customer I want my deposit refunded no later than three business days after the rental is closed so that money is not held forever.",
+          "criteria": [
+            "A refund is blocked while a rental is active.",
+            "A refund is blocked while penalties are unpaid.",
+            "The refund deadline skips weekends."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-013",
+          "version": 1,
+          "title": "Seasonal price coefficient",
+          "story": "As a service owner I want a 130 percent coefficient from May to September so that high season demand is balanced.",
+          "criteria": [
+            "April 30 uses coefficient 100.",
+            "May 1 uses coefficient 130.",
+            "The coefficient applies to the rental price only."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-014",
+          "version": 1,
+          "title": "Only one active rental per customer",
+          "story": "As a service owner I want a customer to hold at most one active rental so that scooters are not hoarded.",
+          "criteria": [
+            "A second reservation during an active rental is rejected.",
+            "After the rental is closed a new reservation is possible.",
+            "The rejection is reported as E_ACTIVE_RENTAL."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-015",
+          "version": 1,
+          "title": "Reservation expires after 15 minutes",
+          "story": "As a service owner I want unused reservations to expire so that scooters return to the pool quickly.",
+          "criteria": [
+            "A start exactly 15 minutes after reservation is accepted.",
+            "A start 16 minutes after reservation fails with E_RESERVATION_EXPIRED.",
+            "An expired reservation frees the scooter."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-016",
+          "version": 1,
+          "title": "Finish maintenance and return to service",
+          "story": "As an operator I want to finish maintenance so that a serviced scooter is available and its mileage counter is reset.",
+          "criteria": [
+            "Service is allowed only for a scooter in maintenance.",
+            "Mileage resets to zero and battery to 100 percent.",
+            "The scooter becomes available for the next customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-017",
+          "version": 1,
+          "title": "Cancel a reservation",
+          "story": "As a customer I want to cancel a reservation before it expires so that the scooter is released immediately.",
+          "criteria": [
+            "Cancel moves the scooter from reserved to available.",
+            "Cancel clears the reservation deadline.",
+            "Cancel is not possible for a rented scooter."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-018",
+          "version": 1,
+          "title": "Blocked customer cannot start a rental",
+          "story": "As a service owner I want a blocked customer to be unable to reserve or rent so that debt and violations are resolved first.",
+          "criteria": [
+            "A blocked customer receives E_CUSTOMER_BLOCKED.",
+            "Reservation and rental start are both rejected.",
+            "The scooter stays available."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-019",
+          "version": 1,
+          "title": "Operator manages customer blocks",
+          "story": "As an operator I want to block and unblock a customer manually so that support cases can be resolved without developer help.",
+          "criteria": [
+            "Only Operator and Admin roles may block a customer.",
+            "A customer cannot block another customer.",
+            "Unblock returns the account to active."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-020",
+          "version": 1,
+          "title": "Invalid operations never change state",
+          "story": "As a developer I want an invalid operation to return a domain error and leave the world unchanged so that failed requests are safe to retry.",
+          "criteria": [
+            "A rental start without a reservation returns E_NO_RESERVATION.",
+            "An unknown operation returns E_UNKNOWN_OP.",
+            "A rejected operation does not create penalties or payments."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        }
+      ]
+    },
+    "CR-004": {
+      "plan": {
+        "cr_id": "CR-004",
+        "changed_nodes": [
+          "entity:Rental",
+          "field:Rental.helmetDeposit",
+          "field:Rental.tariffId",
+          "scenario:HappyPath",
+          "transition:RentalState:active:close",
+          "transition:ScooterState:rented:return"
+        ],
+        "affected_nodes": [
+          "entity:Rental",
+          "field:Rental.batteryUsed",
+          "field:Rental.closed",
+          "field:Rental.distanceKm",
+          "field:Rental.dueAt",
+          "field:Rental.helmetDeposit",
+          "field:Rental.id",
+          "field:Rental.lateFee",
+          "field:Rental.minutesLate",
+          "field:Rental.returnedAt",
+          "field:Rental.startedAt",
+          "field:Rental.state",
+          "field:Rental.tariffId",
+          "invariant:INV-06",
+          "invariant:INV-08",
+          "rule:BRI-03",
+          "rule:BRI-04",
+          "rule:BRI-05",
+          "rule:BRI-08",
+          "rule:BRI-09",
+          "rule:BRI-10",
+          "rule:BRI-12",
+          "scenario:BlacklistAfterThreeLateReturns",
+          "scenario:ClaimWindow",
+          "scenario:ForbiddenStart",
+          "scenario:HappyPath",
+          "scenario:LateFeeCalculation",
+          "scenario:LostScooter",
+          "scenario:ReservationExpiry",
+          "transition:RentalState:active:close",
+          "transition:RentalState:active:dispute",
+          "transition:RentalState:active:markOverdue",
+          "transition:RentalState:closed:reopen",
+          "transition:RentalState:disputed:resolve",
+          "transition:RentalState:draft:cancel",
+          "transition:RentalState:draft:start",
+          "transition:RentalState:overdue:close",
+          "transition:RentalState:overdue:dispute",
+          "transition:ScooterState:rented:return"
+        ],
+        "affected_requirements": [
+          "R-001",
+          "R-002",
+          "R-003",
+          "R-007",
+          "R-008",
+          "R-009",
+          "R-010",
+          "R-011",
+          "R-012",
+          "R-013",
+          "R-014",
+          "R-015",
+          "R-020"
+        ],
+        "tests": [
+          "T-001",
+          "T-002",
+          "T-003",
+          "T-004",
+          "T-005",
+          "T-006",
+          "T-007",
+          "T-008",
+          "T-009",
+          "T-010",
+          "T-011",
+          "T-012",
+          "T-013",
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-019",
+          "T-020",
+          "T-021",
+          "T-022",
+          "T-023",
+          "T-024",
+          "T-025",
+          "T-026",
+          "T-027",
+          "T-028",
+          "T-029",
+          "T-030",
+          "T-031",
+          "T-032",
+          "T-033",
+          "T-034",
+          "T-035",
+          "T-036",
+          "T-037",
+          "T-038",
+          "T-039",
+          "T-040",
+          "T-041",
+          "T-042",
+          "T-043",
+          "T-044",
+          "T-045",
+          "T-046",
+          "T-047",
+          "T-048",
+          "T-049",
+          "T-050",
+          "T-051",
+          "T-052",
+          "T-053",
+          "T-054",
+          "T-055",
+          "T-056",
+          "T-057",
+          "T-058",
+          "T-059",
+          "T-060"
+        ],
+        "reasons": {
+          "T-001": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close",
+            "requirements: R-003"
+          ],
+          "T-002": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, transition:RentalState:draft:cancel"
+          ],
+          "T-003": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03"
+          ],
+          "T-004": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-12"
+          ],
+          "T-005": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-006": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-007": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-008": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-009": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-010": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-011": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-12, transition:RentalState:draft:start"
+          ],
+          "T-012": [
+            "spec nodes: field:Rental.lateFee, field:Rental.minutesLate, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-013": [
+            "spec nodes: field:Rental.lateFee, field:Rental.minutesLate, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-014": [
+            "spec nodes: field:Rental.lateFee, field:Rental.minutesLate, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-015": [
+            "spec nodes: field:Rental.lateFee, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-016": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:closed:reopen, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-017": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-018": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-08, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-019": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-08, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-020": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-021": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-022": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-023": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-024": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-025": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-026": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-027": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-028": [
+            "spec nodes: field:Rental.lateFee, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-029": [
+            "spec nodes: field:Rental.lateFee, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-030": [
+            "spec nodes: field:Rental.lateFee, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-031": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-12, transition:RentalState:draft:start"
+          ],
+          "T-032": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03"
+          ],
+          "T-033": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-08, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-034": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-08, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-035": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-10"
+          ],
+          "T-036": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-10"
+          ],
+          "T-037": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-09, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-038": [
+            "spec nodes: field:Rental.batteryUsed, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close",
+            "requirements: R-003"
+          ],
+          "T-039": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:closed:reopen, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-040": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-05"
+          ],
+          "T-041": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close",
+            "requirements: R-003"
+          ],
+          "T-042": [
+            "spec nodes: field:Rental.lateFee, field:Rental.minutesLate, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-043": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-044": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-045": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close",
+            "requirements: R-003"
+          ],
+          "T-046": [
+            "spec nodes: field:Rental.lateFee, field:Rental.minutesLate, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-047": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-048": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-049": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close",
+            "requirements: R-003"
+          ],
+          "T-050": [
+            "spec nodes: field:Rental.lateFee, field:Rental.minutesLate, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-051": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-052": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-053": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close",
+            "requirements: R-003"
+          ],
+          "T-054": [
+            "spec nodes: field:Rental.lateFee, field:Rental.minutesLate, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-055": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-056": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ],
+          "T-057": [
+            "spec nodes: field:Rental.state, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close",
+            "requirements: R-003"
+          ],
+          "T-058": [
+            "spec nodes: field:Rental.lateFee, field:Rental.minutesLate, invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-05, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:active:markOverdue, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-059": [
+            "spec nodes: invariant:INV-06, invariant:INV-08, rule:BRI-03, rule:BRI-04, rule:BRI-12, transition:RentalState:active:close, transition:RentalState:draft:start, transition:RentalState:overdue:close"
+          ],
+          "T-060": [
+            "spec nodes: invariant:INV-06, invariant:INV-08"
+          ]
+        },
+        "regenerate": [
+          "T-001",
+          "T-002",
+          "T-003",
+          "T-004",
+          "T-005",
+          "T-006",
+          "T-007",
+          "T-008",
+          "T-009",
+          "T-010",
+          "T-011",
+          "T-012",
+          "T-013",
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-019",
+          "T-020",
+          "T-021",
+          "T-022",
+          "T-023",
+          "T-024",
+          "T-025",
+          "T-026",
+          "T-027",
+          "T-028",
+          "T-029",
+          "T-030",
+          "T-031",
+          "T-032",
+          "T-033",
+          "T-034",
+          "T-035",
+          "T-036",
+          "T-037",
+          "T-038",
+          "T-039",
+          "T-040",
+          "T-041",
+          "T-042",
+          "T-043",
+          "T-044",
+          "T-045",
+          "T-046",
+          "T-047",
+          "T-048",
+          "T-049",
+          "T-050",
+          "T-051",
+          "T-052",
+          "T-053",
+          "T-054",
+          "T-055",
+          "T-056",
+          "T-057",
+          "T-058",
+          "T-059",
+          "T-060"
+        ],
+        "conflicts": [],
+        "spec_hash_before": "31d1953db2ef719043980560de9ef2a5f94f41f469f13223d7201afc935635e9",
+        "spec_hash_after": "ccdfb6dfc071af1f68517a596490467662ccc8f79090ace546c4044cac18cd24",
+        "nodes_total": 175,
+        "tests_total": 60,
+        "percent_nodes": 22.29,
+        "notes": [
+          "7 tests selected by requirement text only"
+        ]
+      },
+      "minimality": {
+        "equal": true,
+        "subset_failed": [],
+        "full_failed": [],
+        "missed": [],
+        "extra": [],
+        "selected": 60,
+        "selected_passed": [
+          "T-001",
+          "T-002",
+          "T-003",
+          "T-004",
+          "T-005",
+          "T-006",
+          "T-007",
+          "T-008",
+          "T-009",
+          "T-010",
+          "T-011",
+          "T-012",
+          "T-013",
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-019",
+          "T-020",
+          "T-021",
+          "T-022",
+          "T-023",
+          "T-024",
+          "T-025",
+          "T-026",
+          "T-027",
+          "T-028",
+          "T-029",
+          "T-030",
+          "T-031",
+          "T-032",
+          "T-033",
+          "T-034",
+          "T-035",
+          "T-036",
+          "T-037",
+          "T-038",
+          "T-039",
+          "T-040",
+          "T-041",
+          "T-042",
+          "T-043",
+          "T-044",
+          "T-045",
+          "T-046",
+          "T-047",
+          "T-048",
+          "T-049",
+          "T-050",
+          "T-051",
+          "T-052",
+          "T-053",
+          "T-054",
+          "T-055",
+          "T-056",
+          "T-057",
+          "T-058",
+          "T-059",
+          "T-060"
+        ],
+        "total": 60,
+        "subset_digest": "0375c484ef9173fa0cbaf4d12d696245923418ca9a2d1ebf9bd2eb73838f8c0a",
+        "full_digest": "0375c484ef9173fa0cbaf4d12d696245923418ca9a2d1ebf9bd2eb73838f8c0a",
+        "subset_duration_ms": 4.87,
+        "full_duration_ms": 4.233
+      },
+      "requirements": [
+        {
+          "id": "R-001",
+          "version": 1,
+          "title": "Reserve an available scooter",
+          "story": "As a customer I want to reserve an available scooter so that it is waiting for me at the station for a short time.",
+          "criteria": [
+            "A reservation is created only for a scooter in state available.",
+            "The reservation expires 15 minutes after creation.",
+            "While reserved the scooter cannot be reserved by another customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-002",
+          "version": 1,
+          "title": "Start a rental from a reservation",
+          "story": "As a customer I want to start a rental from my active reservation so that I can ride within the reservation window.",
+          "criteria": [
+            "The rental starts only when the reservation is active and not expired.",
+            "The scooter moves from reserved to rented.",
+            "A rental deadline is set 24 hours after the start."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-003",
+          "version": 2,
+          "title": "Return a scooter and close the rental",
+          "story": "As a customer I want to return a scooter at any station so that the rental is closed and the scooter becomes available again.",
+          "criteria": [
+            "Return closes the rental and records the return time.",
+            "A serviceable scooter returns to state available.",
+            "Battery and mileage are updated after the return.",
+            "CR-004: the rental record stores the helmet deposit separately."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-004",
+          "version": 1,
+          "title": "Deposit is required before the first rental",
+          "story": "As a service owner I want a deposit of 3000 rubles before a rental so that damage and lost scooters are covered.",
+          "criteria": [
+            "Reservation is rejected when the deposit is below 3000.",
+            "A deposit of exactly 3000 is accepted.",
+            "The deposit is a non negative amount at all times."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-005",
+          "version": 2,
+          "title": "Reject a scooter with a low battery",
+          "story": "As a customer I must not receive a scooter with less than 20 percent battery so that I do not get stranded.",
+          "criteria": [
+            "Battery 19 percent is rejected with E_BATTERY_LOW.",
+            "Battery exactly 20 percent is accepted.",
+            "The rejection leaves the scooter in its previous state.",
+            "CR-002: battery 24 percent is rejected.",
+            "CR-002: battery 25 percent is accepted."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Minimum battery raised by CR-002.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-006",
+          "version": 1,
+          "title": "Reject a scooter that needs maintenance",
+          "story": "As an operator I want scooters with 500 km since the last service to leave the fleet so that safety is not compromised.",
+          "criteria": [
+            "Mileage 499 km is still rentable.",
+            "Mileage 500 km or more is rejected with E_MAINTENANCE_DUE.",
+            "After a return that crosses 500 km the scooter goes to maintenance."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-007",
+          "version": 2,
+          "title": "Charge a late return fee",
+          "story": "As a service owner I want a fee of 500 rubles per started hour after a 10 minute grace period so that late returns are discouraged.",
+          "criteria": [
+            "A return within 10 minutes after the deadline costs nothing.",
+            "11 minutes late costs 500 rubles, 70 minutes late costs 500 rubles.",
+            "130 minutes late costs 1000 rubles because the second hour has started.",
+            "CR-001: the grace period is 5 minutes starting from version 2.",
+            "CR-001: 6 minutes late costs 500 rubles."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Grace period reduced by CR-001.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-008",
+          "version": 1,
+          "title": "Block an extremely overdue customer",
+          "story": "As a service owner I want a customer who is more than 24 hours late to be blocked for 7 days so that abandoned rentals are prevented.",
+          "criteria": [
+            "A rental returned 25 hours late blocks the customer.",
+            "The block lasts 7 days from the return.",
+            "A blocked customer cannot create new rentals."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-009",
+          "version": 1,
+          "title": "Blacklist after three late returns",
+          "story": "As a service owner I want a customer with three late returns inside 30 days to be blocked so that repeated violations have consequences.",
+          "criteria": [
+            "Two late returns in the window do not block the customer.",
+            "The third late return inside 30 days blocks the account.",
+            "Returns older than 30 days do not count toward the limit."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-010",
+          "version": 1,
+          "title": "Charge for a lost scooter",
+          "story": "As a service owner I want a lost scooter to cost 25000 rubles and block the customer so that losses are compensated.",
+          "criteria": [
+            "A lost report is accepted only during an active rental.",
+            "A penalty of 25000 rubles is created.",
+            "The customer is blocked and the scooter is in state lost."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-011",
+          "version": 2,
+          "title": "Damage claim window is 48 hours",
+          "story": "As a customer I want to report damage within 48 hours after the return so that late claims do not reopen old rentals.",
+          "criteria": [
+            "A claim exactly 48 hours after the return is accepted.",
+            "A claim 48 hours and 1 minute after the return is rejected with E_CLAIM_LATE.",
+            "A claim is possible only for a closed rental.",
+            "CR-003: a claim 24 hours and 1 minute after return is rejected."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Claim window reduced by CR-003.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-012",
+          "version": 1,
+          "title": "Refund the deposit within three business days",
+          "story": "As a customer I want my deposit refunded no later than three business days after the rental is closed so that money is not held forever.",
+          "criteria": [
+            "A refund is blocked while a rental is active.",
+            "A refund is blocked while penalties are unpaid.",
+            "The refund deadline skips weekends."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-013",
+          "version": 1,
+          "title": "Seasonal price coefficient",
+          "story": "As a service owner I want a 130 percent coefficient from May to September so that high season demand is balanced.",
+          "criteria": [
+            "April 30 uses coefficient 100.",
+            "May 1 uses coefficient 130.",
+            "The coefficient applies to the rental price only."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-014",
+          "version": 1,
+          "title": "Only one active rental per customer",
+          "story": "As a service owner I want a customer to hold at most one active rental so that scooters are not hoarded.",
+          "criteria": [
+            "A second reservation during an active rental is rejected.",
+            "After the rental is closed a new reservation is possible.",
+            "The rejection is reported as E_ACTIVE_RENTAL."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-015",
+          "version": 1,
+          "title": "Reservation expires after 15 minutes",
+          "story": "As a service owner I want unused reservations to expire so that scooters return to the pool quickly.",
+          "criteria": [
+            "A start exactly 15 minutes after reservation is accepted.",
+            "A start 16 minutes after reservation fails with E_RESERVATION_EXPIRED.",
+            "An expired reservation frees the scooter."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-016",
+          "version": 1,
+          "title": "Finish maintenance and return to service",
+          "story": "As an operator I want to finish maintenance so that a serviced scooter is available and its mileage counter is reset.",
+          "criteria": [
+            "Service is allowed only for a scooter in maintenance.",
+            "Mileage resets to zero and battery to 100 percent.",
+            "The scooter becomes available for the next customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-017",
+          "version": 1,
+          "title": "Cancel a reservation",
+          "story": "As a customer I want to cancel a reservation before it expires so that the scooter is released immediately.",
+          "criteria": [
+            "Cancel moves the scooter from reserved to available.",
+            "Cancel clears the reservation deadline.",
+            "Cancel is not possible for a rented scooter."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-018",
+          "version": 1,
+          "title": "Blocked customer cannot start a rental",
+          "story": "As a service owner I want a blocked customer to be unable to reserve or rent so that debt and violations are resolved first.",
+          "criteria": [
+            "A blocked customer receives E_CUSTOMER_BLOCKED.",
+            "Reservation and rental start are both rejected.",
+            "The scooter stays available."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-019",
+          "version": 1,
+          "title": "Operator manages customer blocks",
+          "story": "As an operator I want to block and unblock a customer manually so that support cases can be resolved without developer help.",
+          "criteria": [
+            "Only Operator and Admin roles may block a customer.",
+            "A customer cannot block another customer.",
+            "Unblock returns the account to active."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-020",
+          "version": 1,
+          "title": "Invalid operations never change state",
+          "story": "As a developer I want an invalid operation to return a domain error and leave the world unchanged so that failed requests are safe to retry.",
+          "criteria": [
+            "A rental start without a reservation returns E_NO_RESERVATION.",
+            "An unknown operation returns E_UNKNOWN_OP.",
+            "A rejected operation does not create penalties or payments."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        }
+      ]
+    },
+    "CR-005": {
+      "plan": {
+        "cr_id": "CR-005",
+        "changed_nodes": [
+          "entity:Rental",
+          "scenario:HappyPath",
+          "transition:RentalState:active:close",
+          "transition:ScooterState:rented:return"
+        ],
+        "affected_nodes": [
+          "entity:Rental",
+          "scenario:HappyPath",
+          "transition:RentalState:active:close",
+          "transition:ScooterState:rented:return"
+        ],
+        "affected_requirements": [
+          "R-001",
+          "R-002",
+          "R-003",
+          "R-007",
+          "R-008",
+          "R-011",
+          "R-014",
+          "R-020"
+        ],
+        "tests": [
+          "T-001",
+          "T-038",
+          "T-041",
+          "T-045",
+          "T-049",
+          "T-053",
+          "T-057"
+        ],
+        "reasons": {
+          "T-001": [
+            "requirements: R-003"
+          ],
+          "T-038": [
+            "requirements: R-003"
+          ],
+          "T-041": [
+            "requirements: R-003"
+          ],
+          "T-045": [
+            "requirements: R-003"
+          ],
+          "T-049": [
+            "requirements: R-003"
+          ],
+          "T-053": [
+            "requirements: R-003"
+          ],
+          "T-057": [
+            "requirements: R-003"
+          ]
+        },
+        "regenerate": [],
+        "conflicts": [],
+        "spec_hash_before": "31d1953db2ef719043980560de9ef2a5f94f41f469f13223d7201afc935635e9",
+        "spec_hash_after": "31d1953db2ef719043980560de9ef2a5f94f41f469f13223d7201afc935635e9",
+        "nodes_total": 174,
+        "tests_total": 60,
+        "percent_nodes": 2.3,
+        "notes": [
+          "7 tests selected by requirement text only"
+        ]
+      },
+      "minimality": {
+        "equal": true,
+        "subset_failed": [],
+        "full_failed": [],
+        "missed": [],
+        "extra": [],
+        "selected": 7,
+        "selected_passed": [
+          "T-001",
+          "T-038",
+          "T-041",
+          "T-045",
+          "T-049",
+          "T-053",
+          "T-057"
+        ],
+        "total": 60,
+        "subset_digest": "4ed607c3a6d82235af0e9ab612f8816fdb4b4c4d1f9ac229961932def63ea1e6",
+        "full_digest": "0375c484ef9173fa0cbaf4d12d696245923418ca9a2d1ebf9bd2eb73838f8c0a",
+        "subset_duration_ms": 1.116,
+        "full_duration_ms": 5.055
+      },
+      "requirements": [
+        {
+          "id": "R-001",
+          "version": 1,
+          "title": "Reserve an available scooter",
+          "story": "As a customer I want to reserve an available scooter so that it is waiting for me at the station for a short time.",
+          "criteria": [
+            "A reservation is created only for a scooter in state available.",
+            "The reservation expires 15 minutes after creation.",
+            "While reserved the scooter cannot be reserved by another customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-002",
+          "version": 1,
+          "title": "Start a rental from a reservation",
+          "story": "As a customer I want to start a rental from my active reservation so that I can ride within the reservation window.",
+          "criteria": [
+            "The rental starts only when the reservation is active and not expired.",
+            "The scooter moves from reserved to rented.",
+            "A rental deadline is set 24 hours after the start."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-003",
+          "version": 3,
+          "title": "Return a scooter and close the rental",
+          "story": "As a customer I want to return a scooter at any station so that the rental closes immediately and the scooter becomes available for the next customer.",
+          "criteria": [
+            "Return closes the rental and records the return time.",
+            "A serviceable scooter returns to state available.",
+            "Battery and mileage are updated after the return.",
+            "CR-004: the rental record stores the helmet deposit separately.",
+            "CR-005: the rental closes immediately after the return event."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-004",
+          "version": 1,
+          "title": "Deposit is required before the first rental",
+          "story": "As a service owner I want a deposit of 3000 rubles before a rental so that damage and lost scooters are covered.",
+          "criteria": [
+            "Reservation is rejected when the deposit is below 3000.",
+            "A deposit of exactly 3000 is accepted.",
+            "The deposit is a non negative amount at all times."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-005",
+          "version": 2,
+          "title": "Reject a scooter with a low battery",
+          "story": "As a customer I must not receive a scooter with less than 20 percent battery so that I do not get stranded.",
+          "criteria": [
+            "Battery 19 percent is rejected with E_BATTERY_LOW.",
+            "Battery exactly 20 percent is accepted.",
+            "The rejection leaves the scooter in its previous state.",
+            "CR-002: battery 24 percent is rejected.",
+            "CR-002: battery 25 percent is accepted."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Minimum battery raised by CR-002.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-006",
+          "version": 1,
+          "title": "Reject a scooter that needs maintenance",
+          "story": "As an operator I want scooters with 500 km since the last service to leave the fleet so that safety is not compromised.",
+          "criteria": [
+            "Mileage 499 km is still rentable.",
+            "Mileage 500 km or more is rejected with E_MAINTENANCE_DUE.",
+            "After a return that crosses 500 km the scooter goes to maintenance."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-007",
+          "version": 2,
+          "title": "Charge a late return fee",
+          "story": "As a service owner I want a fee of 500 rubles per started hour after a 10 minute grace period so that late returns are discouraged.",
+          "criteria": [
+            "A return within 10 minutes after the deadline costs nothing.",
+            "11 minutes late costs 500 rubles, 70 minutes late costs 500 rubles.",
+            "130 minutes late costs 1000 rubles because the second hour has started.",
+            "CR-001: the grace period is 5 minutes starting from version 2.",
+            "CR-001: 6 minutes late costs 500 rubles."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Grace period reduced by CR-001.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-008",
+          "version": 1,
+          "title": "Block an extremely overdue customer",
+          "story": "As a service owner I want a customer who is more than 24 hours late to be blocked for 7 days so that abandoned rentals are prevented.",
+          "criteria": [
+            "A rental returned 25 hours late blocks the customer.",
+            "The block lasts 7 days from the return.",
+            "A blocked customer cannot create new rentals."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-009",
+          "version": 1,
+          "title": "Blacklist after three late returns",
+          "story": "As a service owner I want a customer with three late returns inside 30 days to be blocked so that repeated violations have consequences.",
+          "criteria": [
+            "Two late returns in the window do not block the customer.",
+            "The third late return inside 30 days blocks the account.",
+            "Returns older than 30 days do not count toward the limit."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-010",
+          "version": 1,
+          "title": "Charge for a lost scooter",
+          "story": "As a service owner I want a lost scooter to cost 25000 rubles and block the customer so that losses are compensated.",
+          "criteria": [
+            "A lost report is accepted only during an active rental.",
+            "A penalty of 25000 rubles is created.",
+            "The customer is blocked and the scooter is in state lost."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-011",
+          "version": 2,
+          "title": "Damage claim window is 48 hours",
+          "story": "As a customer I want to report damage within 48 hours after the return so that late claims do not reopen old rentals.",
+          "criteria": [
+            "A claim exactly 48 hours after the return is accepted.",
+            "A claim 48 hours and 1 minute after the return is rejected with E_CLAIM_LATE.",
+            "A claim is possible only for a closed rental.",
+            "CR-003: a claim 24 hours and 1 minute after return is rejected."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "Claim window reduced by CR-003.",
+          "updated_at": "2026-11-17T07:18:17+00:00"
+        },
+        {
+          "id": "R-012",
+          "version": 1,
+          "title": "Refund the deposit within three business days",
+          "story": "As a customer I want my deposit refunded no later than three business days after the rental is closed so that money is not held forever.",
+          "criteria": [
+            "A refund is blocked while a rental is active.",
+            "A refund is blocked while penalties are unpaid.",
+            "The refund deadline skips weekends."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-013",
+          "version": 1,
+          "title": "Seasonal price coefficient",
+          "story": "As a service owner I want a 130 percent coefficient from May to September so that high season demand is balanced.",
+          "criteria": [
+            "April 30 uses coefficient 100.",
+            "May 1 uses coefficient 130.",
+            "The coefficient applies to the rental price only."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-014",
+          "version": 1,
+          "title": "Only one active rental per customer",
+          "story": "As a service owner I want a customer to hold at most one active rental so that scooters are not hoarded.",
+          "criteria": [
+            "A second reservation during an active rental is rejected.",
+            "After the rental is closed a new reservation is possible.",
+            "The rejection is reported as E_ACTIVE_RENTAL."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-015",
+          "version": 1,
+          "title": "Reservation expires after 15 minutes",
+          "story": "As a service owner I want unused reservations to expire so that scooters return to the pool quickly.",
+          "criteria": [
+            "A start exactly 15 minutes after reservation is accepted.",
+            "A start 16 minutes after reservation fails with E_RESERVATION_EXPIRED.",
+            "An expired reservation frees the scooter."
+          ],
+          "kind": "boundary",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-016",
+          "version": 1,
+          "title": "Finish maintenance and return to service",
+          "story": "As an operator I want to finish maintenance so that a serviced scooter is available and its mileage counter is reset.",
+          "criteria": [
+            "Service is allowed only for a scooter in maintenance.",
+            "Mileage resets to zero and battery to 100 percent.",
+            "The scooter becomes available for the next customer."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-017",
+          "version": 1,
+          "title": "Cancel a reservation",
+          "story": "As a customer I want to cancel a reservation before it expires so that the scooter is released immediately.",
+          "criteria": [
+            "Cancel moves the scooter from reserved to available.",
+            "Cancel clears the reservation deadline.",
+            "Cancel is not possible for a rented scooter."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-018",
+          "version": 1,
+          "title": "Blocked customer cannot start a rental",
+          "story": "As a service owner I want a blocked customer to be unable to reserve or rent so that debt and violations are resolved first.",
+          "criteria": [
+            "A blocked customer receives E_CUSTOMER_BLOCKED.",
+            "Reservation and rental start are both rejected.",
+            "The scooter stays available."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-019",
+          "version": 1,
+          "title": "Operator manages customer blocks",
+          "story": "As an operator I want to block and unblock a customer manually so that support cases can be resolved without developer help.",
+          "criteria": [
+            "Only Operator and Admin roles may block a customer.",
+            "A customer cannot block another customer.",
+            "Unblock returns the account to active."
+          ],
+          "kind": "functional",
+          "priority": "must",
+          "role": "Operator",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        },
+        {
+          "id": "R-020",
+          "version": 1,
+          "title": "Invalid operations never change state",
+          "story": "As a developer I want an invalid operation to return a domain error and leave the world unchanged so that failed requests are safe to retry.",
+          "criteria": [
+            "A rental start without a reservation returns E_NO_RESERVATION.",
+            "An unknown operation returns E_UNKNOWN_OP.",
+            "A rejected operation does not create penalties or payments."
+          ],
+          "kind": "exception",
+          "priority": "must",
+          "role": "Customer",
+          "status": "approved",
+          "notes": "",
+          "updated_at": "2026-11-17T07:18:16+00:00"
+        }
+      ]
+    }
+  }
+}

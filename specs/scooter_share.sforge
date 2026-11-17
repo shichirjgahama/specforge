@@ -1,0 +1,597 @@
+// =====================================================================
+// SpecForge specification: RollCity scooter and bike sharing
+// Domain: short term rental of electric scooters with deposit, deadlines,
+// penalties, maintenance and seasonal pricing.
+// =====================================================================
+
+spec RollCity version 3;
+
+// ------------------------------------------------------------ config
+// Time is measured in minutes from 2026-01-01 00:00. Money is in rubles.
+
+const lateFeePerHour: Money = 500;
+const graceMinutes: Int = 10;
+const depositAmount: Money = 3000;
+const maxRentalHours: Int = 24;
+const perMinutePrice: Money = 10;
+const minBattery: Int = 20;
+const serviceMileage: Int = 500;
+const reservationTtlMinutes: Int = 15;
+const damageClaimHours: Int = 48;
+const refundBusinessDays: Int = 3;
+const blacklistLateReturns: Int = 3;
+const blacklistWindowDays: Int = 30;
+const seasonCoefficient: Int = 130;
+const seasonStartMonth: Int = 5;
+const seasonEndMonth: Int = 9;
+const lostFee: Money = 25000;
+const overdueBlockHours: Int = 24;
+const blockDays: Int = 7;
+
+// ------------------------------------------------------------ enums
+
+enum ScooterState {
+  available, reserved, rented, maintenance, lost, retired
+}
+
+enum RentalState {
+  draft, active, overdue, closed, disputed, cancelled
+}
+
+enum ReservationState {
+  none, active, used, cancelled, expired
+}
+
+// ------------------------------------------------------------ entities
+
+entity Customer {
+  id: Identifier;
+  name: Text;
+  role: Text = "Customer";
+  status: Text = "active";
+  deposit: Money >= 0 = 0;
+  debt: Money >= 0 = 0;
+  balance: Money = 0;
+  lateReturns: Int >= 0 = 0;
+  blockedUntil: Time = 0;
+  trustScore: Int [0..100] = 100;
+  rentals: Int >= 0 = 0;
+}
+link R-004, R-018;
+
+entity Operator {
+  id: Identifier;
+  name: Text;
+  role: Text = "Operator";
+  status: Text = "active";
+}
+link R-016, R-019;
+
+entity Admin {
+  id: Identifier;
+  name: Text;
+  role: Text = "Admin";
+  status: Text = "active";
+}
+
+entity Scooter {
+  id: Identifier;
+  model: Text;
+  state: State<ScooterState> = available;
+  battery: Int [0..100] = 100;
+  mileageSinceService: Int >= 0 = 0;
+  station: Text;
+  reservedUntil: Time = 0;
+  lastServiceAt: Time = 0;
+}
+link R-005, R-006, R-011, R-016;
+
+entity Station {
+  id: Identifier;
+  name: Text;
+  capacity: Int >= 0;
+  occupied: Int >= 0;
+  city: Text;
+}
+
+entity Reservation {
+  id: Identifier;
+  state: State<ReservationState> = none;
+  createdAt: Time = 0;
+  expiresAt: Time = 0;
+}
+link R-001, R-002, R-015, R-017;
+
+entity Rental {
+  id: Identifier;
+  state: State<RentalState> = draft;
+  startedAt: Time = 0;
+  dueAt: Time = 0;
+  returnedAt: Time = 0;
+  distanceKm: Int >= 0 = 10;
+  batteryUsed: Int [0..100] = 10;
+  minutesLate: Int >= 0 = 0;
+  lateFee: Money >= 0 = 0;
+  closed: Bool = false;
+  tariffId: Text;
+}
+link R-003, R-007, R-008, R-011, R-014, R-020;
+
+entity Tariff {
+  id: Identifier;
+  name: Text;
+  perMinute: Money >= 0;
+  depositAmount: Money >= 0;
+  lateFeePerHour: Money >= 0;
+  graceMinutes: Int >= 0;
+  maxHours: Int >= 1;
+}
+link R-004, R-007;
+
+entity Payment {
+  id: Identifier;
+  amount: Money >= 0;
+  kind: Text;
+  createdAt: Time;
+  status: Text;
+  rentalId: Text;
+}
+link R-009, R-012;
+
+entity Penalty {
+  id: Identifier;
+  amount: Money >= 0 = 0;
+  reason: Text;
+  createdAt: Time = 0;
+  paid: Bool = false;
+  rentalId: Text;
+}
+link R-007, R-010;
+
+entity DamageClaim {
+  id: Identifier;
+  amount: Money >= 0 = 1000;
+  severity: Text;
+  state: Text = "none";
+  createdAt: Time = 0;
+  rentalId: Text;
+}
+link R-011;
+
+entity MaintenanceRecord {
+  id: Identifier;
+  kind: Text;
+  startedAt: Time;
+  finishedAt: Time;
+  mileageAtService: Int >= 0 = 0;
+}
+link R-006, R-016;
+
+entity BlacklistEntry {
+  id: Identifier;
+  reason: Text;
+  createdAt: Time = 0;
+  expiresAt: Time = 0;
+}
+link R-008, R-009;
+
+entity Season {
+  id: Identifier;
+  name: Text;
+  coefficient: Int >= 100;
+  startMonth: Int [1..12];
+  endMonth: Int [1..12];
+}
+link R-013;
+
+// ------------------------------------------------------------ roles
+
+role Customer {
+  may reserve, rent, return, pay, claim, refund, report;
+  forbid service, block, grant;
+}
+link R-018;
+
+role Operator {
+  may service, block, reserve, return;
+  forbid grant, refund;
+}
+link R-016, R-019;
+
+role Admin {
+  may reserve, rent, return, pay, claim, refund, report, service, block, grant;
+}
+link R-019, R-020;
+
+// ------------------------------------------------------------ state machines
+
+state ScooterState {
+  initial available;
+
+  available -> reserved : reserve
+    when scooter.battery >= minBattery do {
+      scooter.state := reserved;
+    };
+  link R-001, R-005;
+
+  reserved -> available : cancel do {
+    scooter.state := available;
+  };
+  link R-017;
+
+  reserved -> available : expire do {
+    scooter.state := available;
+  };
+  link R-015;
+
+  reserved -> rented : rent
+    when scooter.battery >= minBattery do {
+      scooter.state := rented;
+    };
+  link R-002, R-005;
+
+  rented -> available : return do {
+    scooter.state := available;
+  };
+  link R-003;
+
+  rented -> maintenance : returnFault do {
+    scooter.state := maintenance;
+  };
+  link R-006;
+
+  rented -> lost : lost do {
+    scooter.state := lost;
+  };
+  link R-010;
+
+  maintenance -> available : service do {
+    scooter.state := available;
+  };
+  link R-016;
+
+  maintenance -> retired : retire do {
+    scooter.state := retired;
+  };
+
+  lost -> maintenance : recover do {
+    scooter.state := maintenance;
+  };
+  link R-010;
+}
+
+state RentalState {
+  initial draft;
+
+  draft -> active : start do {
+    rental.state := active;
+  };
+  link R-002;
+
+  closed -> active : reopen do {
+    rental.state := active;
+  };
+  link R-014;
+
+  draft -> cancelled : cancel do {
+    rental.state := cancelled;
+  };
+
+  active -> overdue : markOverdue do {
+    rental.state := overdue;
+  };
+  link R-007, R-008;
+
+  active -> closed : close do {
+    rental.state := closed;
+  };
+  link R-003;
+
+  overdue -> closed : close do {
+    rental.state := closed;
+  };
+  link R-007, R-008;
+
+  active -> disputed : dispute do {
+    rental.state := disputed;
+  };
+  link R-011;
+
+  overdue -> disputed : dispute do {
+    rental.state := disputed;
+  };
+  link R-011;
+
+  disputed -> closed : resolve do {
+    rental.state := closed;
+  };
+}
+
+// ------------------------------------------------------------ rules
+
+rule BRI-01 priority 100 {
+  when scooter.state == available
+    and scooter.battery >= minBattery
+    and scooter.mileageSinceService < serviceMileage
+    and customer.deposit >= depositAmount
+  then {
+    assert customer.debt >= 0;
+    emit "reservation preconditions passed";
+  } else {
+    emit "reservation blocked";
+  }
+  ensures scooter.battery >= 0 and scooter.battery <= 100;
+}
+link R-004, R-005, R-006, R-014;
+
+rule BRI-02 priority 90 {
+  when reservation.state == active
+  then {
+    assert reservation.expiresAt <= now() + reservationTtlMinutes;
+  } else {
+    emit "no active reservation";
+  }
+  ensures reservation.expiresAt >= 0;
+}
+link R-001, R-015;
+
+rule BRI-03 priority 90 {
+  when reservation.state == active and rental.state == draft
+  then {
+    assert now() <= reservation.expiresAt;
+  } else {
+    emit "rental is not waiting for a reservation";
+  }
+  ensures now() >= 0;
+}
+link R-002, R-015;
+
+rule BRI-04 priority 80 {
+  when rental.minutesLate > graceMinutes
+  then {
+    rental.lateFee := lateFeePerHour * ((rental.minutesLate - graceMinutes + 59) / 60);
+    penalty.amount := rental.lateFee;
+    penalty.reason := "late_return";
+  } else {
+    rental.lateFee := 0;
+    emit "within grace period";
+  }
+  ensures rental.lateFee >= 0;
+}
+link R-007;
+
+rule BRI-05 priority 70 {
+  when rental.minutesLate > overdueBlockHours * 60
+  then {
+    customer.status := "blocked";
+    customer.blockedUntil := now() + blockDays * 1440;
+  } else {
+    emit "not overdue enough for a block";
+  }
+  ensures customer.deposit >= 0;
+}
+link R-008;
+
+rule BRI-06 priority 70 {
+  when customer.lateReturns >= blacklistLateReturns
+  then {
+    customer.status := "blocked";
+    blacklistEntry.reason := "late_returns";
+    blacklistEntry.createdAt := now();
+  } else {
+    emit "late return count below threshold";
+  }
+  ensures customer.debt >= 0;
+}
+link R-009;
+
+rule BRI-07 priority 60 {
+  when scooter.state == lost
+  then {
+    penalty.amount := lostFee;
+    penalty.reason := "lost_scooter";
+    customer.status := "blocked";
+  } else {
+    emit "scooter is not lost";
+  }
+  ensures penalty.amount >= 0;
+}
+link R-010;
+
+rule BRI-08 priority 60 {
+  when rental.closed == true
+  then {
+    assert minutesBetween(rental.returnedAt, now()) <= damageClaimHours * 60;
+  } else {
+    emit "damage claim needs a closed rental";
+  }
+  ensures rental.returnedAt >= 0;
+}
+link R-011;
+
+rule BRI-09 priority 50 {
+  when rental.closed == true and customer.debt == 0
+  then {
+    customer.deposit := 0;
+    payment.amount := depositAmount;
+    payment.kind := "deposit_refund";
+    payment.status := "done";
+  } else {
+    emit "refund blocked";
+  }
+  ensures customer.deposit >= 0;
+}
+link R-012;
+
+rule BRI-10 priority 40 {
+  when season.coefficient > 100
+  then {
+    payment.amount := perMinutePrice * rental.distanceKm * seasonCoefficient / 100;
+    payment.kind := "rent";
+  } else {
+    payment.amount := perMinutePrice * rental.distanceKm;
+    payment.kind := "rent";
+  }
+  ensures payment.amount >= 0;
+}
+link R-013;
+
+rule BRI-11 priority 30 {
+  when scooter.mileageSinceService >= serviceMileage
+  then {
+    scooter.state := maintenance;
+    maintenanceRecord.kind := "scheduled";
+    maintenanceRecord.mileageAtService := scooter.mileageSinceService;
+  } else {
+    emit "service not required";
+  }
+  ensures scooter.battery >= 0;
+}
+link R-006, R-016;
+
+rule BRI-12 priority 20 {
+  when customer.rentals >= 1
+  then {
+    assert rental.state != active or rental.closed == false;
+  } else {
+    emit "first rental";
+  }
+  ensures customer.rentals >= 0;
+}
+link R-014, R-020;
+
+// ------------------------------------------------------------ invariants
+
+invariant INV-01 always customer.deposit >= 0
+  message "deposit can never become negative";
+link R-004, R-012;
+
+invariant INV-02 always scooter.battery >= 0 and scooter.battery <= 100
+  message "battery stays inside 0..100";
+link R-005, R-016;
+
+invariant INV-03 always customer.debt >= 0
+  message "debt can never become negative";
+link R-007, R-010;
+
+invariant INV-04 always penalty.amount >= 0
+  message "penalty is never negative";
+link R-007, R-010;
+
+invariant INV-05 always payment.amount >= 0
+  message "payment is never negative";
+link R-012, R-013;
+
+invariant INV-06 always rental.state != active or rental.dueAt > rental.startedAt
+  message "rental deadline is after its start";
+link R-007;
+
+invariant INV-07 always scooter.state != lost or customer.status == "blocked"
+  message "a lost scooter always blocks the customer";
+link R-010;
+
+invariant INV-08 always rental.minutesLate > 0 or rental.lateFee == 0
+  message "no late fee without a late return";
+link R-007;
+
+// ------------------------------------------------------------ scenarios
+
+scenario HappyPath {
+  given customer.deposit = 3000;
+  given scooter.battery = 90;
+  step reserve(customer, scooter);
+  step advance(5);
+  step start_rental(customer, scooter);
+  step advance(55);
+  step return_scooter(customer, scooter);
+  expect rental.state == closed;
+  expect scooter.state == available;
+  expect countPenalties(customer) == 0;
+  expect lastError() == "";
+}
+link R-001, R-002, R-003;
+
+scenario BatteryBoundary {
+  given scooter.battery = 19;
+  step reserve(customer, scooter);
+  expect lastError() == "E_BATTERY_LOW";
+  expect scooter.state == available;
+}
+link R-005;
+
+scenario MaintenanceBoundary {
+  given scooter.mileageSinceService = 500;
+  step reserve(customer, scooter);
+  expect lastError() == "E_MAINTENANCE_DUE";
+  expect scooter.state == available;
+}
+link R-006;
+
+scenario ReservationExpiry {
+  step reserve(customer, scooter);
+  step advance(16);
+  step start_rental(customer, scooter);
+  expect lastError() == "E_RESERVATION_EXPIRED";
+  expect scooter.state == available;
+}
+link R-015;
+
+scenario LateFeeCalculation {
+  step reserve(customer, scooter);
+  step start_rental(customer, scooter);
+  step advance(1510);
+  step return_scooter(customer, scooter);
+  expect rental.minutesLate == 70;
+  expect rental.lateFee == 500;
+  expect customer.debt == 500;
+  expect countPenalties(customer) == 1;
+}
+link R-007;
+
+scenario BlacklistAfterThreeLateReturns {
+  given scooter.battery = 100;
+  step reserve(customer, scooter);
+  step start_rental(customer, scooter);
+  step advance(1500);
+  step return_scooter(customer, scooter);
+  step reserve(customer, scooter);
+  step start_rental(customer, scooter);
+  step advance(1500);
+  step return_scooter(customer, scooter);
+  step reserve(customer, scooter);
+  step start_rental(customer, scooter);
+  step advance(1500);
+  step return_scooter(customer, scooter);
+  expect customer.lateReturns == 3;
+  expect customer.status == "blocked";
+}
+link R-009;
+
+scenario ClaimWindow {
+  step reserve(customer, scooter);
+  step start_rental(customer, scooter);
+  step return_scooter(customer, scooter);
+  step advance(2940);
+  step claim_damage(customer, rental);
+  expect lastError() == "E_CLAIM_LATE";
+  expect countPenalties(customer) == 0;
+}
+link R-011;
+
+scenario LostScooter {
+  step reserve(customer, scooter);
+  step start_rental(customer, scooter);
+  step report_lost(customer, scooter);
+  expect scooter.state == lost;
+  expect customer.status == "blocked";
+  expect totalPenalties(customer) == 25000;
+}
+link R-010;
+
+scenario ForbiddenStart {
+  given scooter.state = available;
+  step start_rental(customer, scooter);
+  expect lastError() == "E_NO_RESERVATION";
+}
+link R-020;
+
